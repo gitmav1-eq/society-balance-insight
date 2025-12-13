@@ -38,15 +38,26 @@ const tourSteps: TourStep[] = [
   },
 ];
 
-const GuidedTour = () => {
+interface GuidedTourProps {
+  forceStart?: boolean;
+  onTourEnd?: () => void;
+}
+
+const GuidedTour = ({ forceStart, onTourEnd }: GuidedTourProps) => {
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
   const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({});
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Check if tour should auto-start
+  // Check if tour should auto-start OR if forced
   useEffect(() => {
+    if (forceStart) {
+      setCurrentStep(0);
+      setIsActive(true);
+      return;
+    }
+    
     const hasSeenTour = localStorage.getItem("society-exe-tour-completed");
     if (!hasSeenTour) {
       // Delay start to let page load
@@ -55,7 +66,7 @@ const GuidedTour = () => {
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [forceStart]);
 
   // Position tooltip relative to target element
   const updatePosition = useCallback(() => {
@@ -153,6 +164,7 @@ const GuidedTour = () => {
     if (showCelebration) {
       setShowConfetti(true);
     }
+    onTourEnd?.();
   };
 
   const handleSkip = () => {
