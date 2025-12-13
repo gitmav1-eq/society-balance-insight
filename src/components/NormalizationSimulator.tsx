@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const presetBehaviors = [
   "EMI culture",
@@ -23,6 +27,49 @@ const NormalizationSimulator = () => {
   const [behavior, setBehavior] = useState("");
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current?.querySelectorAll(".sim-animate") || [],
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          delay: 0.3,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const handleSimulate = async (behaviorToSimulate: string) => {
     if (!behaviorToSimulate.trim()) {
@@ -40,14 +87,9 @@ const NormalizationSimulator = () => {
       });
 
       if (error) throw error;
-
-      if (data?.result) {
-        setResult(data.result);
-      } else {
-        toast.error("Simulation failed");
-      }
-    } catch (err) {
-      console.error("Error:", err);
+      if (data?.result) setResult(data.result);
+      else toast.error("Simulation failed");
+    } catch {
       toast.error("System error");
     } finally {
       setIsLoading(false);
@@ -60,25 +102,19 @@ const NormalizationSimulator = () => {
   };
 
   return (
-    <section id="simulator" className="py-24 px-6 md:px-12 lg:px-24 border-t border-border">
+    <section ref={sectionRef} id="simulator" className="py-24 px-6 md:px-12 lg:px-24 border-t border-border">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="font-mono text-[10px] tracking-[0.4em] text-primary mb-4">
-            THE NORMALIZATION SIMULATOR
-          </p>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-4">
-            Project the trajectory
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+        <div ref={headerRef} className="text-center mb-16">
+          <p className="sim-animate font-mono text-[10px] tracking-[0.4em] text-primary mb-4">THE NORMALIZATION SIMULATOR</p>
+          <h2 className="sim-animate font-serif text-3xl md:text-4xl lg:text-5xl mb-4">Project the trajectory</h2>
+          <p className="sim-animate text-muted-foreground max-w-xl mx-auto">
             Select a normalized behavior. See its individual and collective impact unfold over decades.
           </p>
         </div>
 
         {!result ? (
-          <div className="border border-border bg-card/30 backdrop-blur-sm p-8 md:p-12">
-            <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-6">
-              SELECT BEHAVIOR TO SIMULATE
-            </p>
+          <div ref={formRef} className="border border-border bg-card/30 backdrop-blur-sm p-8 md:p-12">
+            <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-6">SELECT BEHAVIOR TO SIMULATE</p>
             
             <div className="flex flex-wrap gap-3 mb-8">
               {presetBehaviors.map((preset, index) => (
@@ -86,7 +122,7 @@ const NormalizationSimulator = () => {
                   key={index}
                   onClick={() => handleSimulate(preset)}
                   disabled={isLoading}
-                  className="px-5 py-3 text-sm border border-border bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-3 text-sm border border-border bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all disabled:opacity-50"
                 >
                   {preset}
                 </button>
@@ -94,9 +130,7 @@ const NormalizationSimulator = () => {
             </div>
 
             <div className="border-t border-border pt-6">
-              <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-4">
-                OR DESCRIBE CUSTOM BEHAVIOR
-              </p>
+              <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-4">OR DESCRIBE CUSTOM BEHAVIOR</p>
               <Textarea
                 placeholder="Enter a financial behavior to simulate..."
                 value={behavior}
@@ -104,12 +138,7 @@ const NormalizationSimulator = () => {
                 className="min-h-[80px] resize-none bg-background border-border mb-4"
                 disabled={isLoading}
               />
-              
-              <Button
-                onClick={() => handleSimulate(behavior)}
-                disabled={isLoading || !behavior.trim()}
-                className="w-full md:w-auto px-8"
-              >
+              <Button onClick={() => handleSimulate(behavior)} disabled={isLoading || !behavior.trim()} className="w-full md:w-auto px-8">
                 {isLoading ? (
                   <span className="flex items-center gap-2">
                     <span className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
@@ -122,75 +151,47 @@ const NormalizationSimulator = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-6 animate-fade-in">
-            {/* Behavior Label */}
+          <div className="space-y-6">
             <div className="p-4 bg-primary/10 border border-primary/30">
-              <p className="font-mono text-[9px] tracking-widest text-primary mb-1">
-                SIMULATING
-              </p>
+              <p className="font-mono text-[9px] tracking-widest text-primary mb-1">SIMULATING</p>
               <p className="text-lg font-medium">{behavior}</p>
             </div>
 
-            {/* Results Grid */}
             <div className="grid md:grid-cols-2 gap-4">
-              {/* Individual Impact */}
               <div className="p-6 border border-border bg-card/30">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-2 h-2 bg-blue-500 rounded-full" />
-                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
-                    INDIVIDUAL IMPACT
-                  </p>
+                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">INDIVIDUAL IMPACT</p>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {result.individual}
-                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{result.individual}</p>
               </div>
 
-              {/* Collective Impact */}
               <div className="p-6 border border-border bg-card/30">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-2 h-2 bg-purple-500 rounded-full" />
-                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
-                    COLLECTIVE IMPACT (10-30 YEARS)
-                  </p>
+                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">COLLECTIVE IMPACT (10-30 YEARS)</p>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {result.collective}
-                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{result.collective}</p>
               </div>
 
-              {/* System Pressure */}
               <div className="p-6 border border-border bg-card/30">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-2 h-2 bg-orange-500 rounded-full" />
-                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
-                    SYSTEM PRESSURE POINTS
-                  </p>
+                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">SYSTEM PRESSURE POINTS</p>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {result.pressure}
-                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{result.pressure}</p>
               </div>
 
-              {/* Lever for Change */}
               <div className="p-6 border border-primary/30 bg-primary/5">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-2 h-2 bg-primary rounded-full" />
-                  <p className="font-mono text-[9px] tracking-widest text-primary">
-                    LEVER FOR CHANGE
-                  </p>
+                  <p className="font-mono text-[9px] tracking-widest text-primary">LEVER FOR CHANGE</p>
                 </div>
-                <p className="text-sm text-foreground leading-relaxed">
-                  {result.lever}
-                </p>
+                <p className="text-sm text-foreground leading-relaxed">{result.lever}</p>
               </div>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              className="text-muted-foreground"
-            >
+            <Button variant="outline" onClick={handleReset} className="text-muted-foreground">
               ← New Simulation
             </Button>
           </div>
