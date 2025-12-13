@@ -5,6 +5,7 @@ import NormalizationSimulator from "@/components/NormalizationSimulator";
 import PerspectiveShift from "@/components/PerspectiveShift";
 import DailySignal from "@/components/DailySignal";
 import DynamicFooter from "@/components/DynamicFooter";
+import ArchivistChat from "@/components/ArchivistChat";
 
 const Index = () => {
   const simulatorRef = useRef<HTMLDivElement>(null);
@@ -30,6 +31,7 @@ const Index = () => {
       </main>
       
       <DynamicFooter />
+      <ArchivistChat />
     </div>
   );
 };
