@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { X, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import ConfettiCelebration from "@/components/ui/ConfettiCelebration";
 
 interface TourStep {
   target: string;
@@ -42,6 +43,7 @@ const GuidedTour = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
   const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({});
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Check if tour should auto-start
   useEffect(() => {
@@ -145,21 +147,30 @@ const GuidedTour = () => {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = (showCelebration: boolean = true) => {
     setIsActive(false);
     localStorage.setItem("society-exe-tour-completed", "true");
+    if (showCelebration) {
+      setShowConfetti(true);
+    }
   };
 
   const handleSkip = () => {
-    handleComplete();
+    handleComplete(false);
   };
 
-  if (!isActive) return null;
+  if (!isActive && !showConfetti) return null;
 
   const step = tourSteps[currentStep];
 
   return (
-    <div className="fixed inset-0 z-[100] pointer-events-none">
+    <>
+      <ConfettiCelebration 
+        isActive={showConfetti} 
+        onComplete={() => setShowConfetti(false)} 
+      />
+      {isActive && (
+        <div className="fixed inset-0 z-[100] pointer-events-none">
       {/* Dark overlay with cutout */}
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-auto" />
 
@@ -265,7 +276,9 @@ const GuidedTour = () => {
           ))}
         </div>
       </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 
