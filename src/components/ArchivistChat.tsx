@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { X, MessageSquare, Send } from "lucide-react";
+import { useAmbientSound } from "@/hooks/useAmbientSound";
 
 interface Message {
   role: "user" | "archivist";
@@ -23,6 +24,7 @@ const ArchivistChat = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { playTap, playMessage } = useAmbientSound();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -34,6 +36,7 @@ const ArchivistChat = () => {
     const question = (questionOverride || input).trim();
     if (!question || isLoading) return;
 
+    playTap();
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: question }]);
     setIsLoading(true);
@@ -47,6 +50,7 @@ const ArchivistChat = () => {
 
       if (data?.response) {
         setMessages((prev) => [...prev, { role: "archivist", content: data.response }]);
+        playMessage();
       } else {
         setMessages((prev) => [
           ...prev,

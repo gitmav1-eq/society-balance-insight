@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import SimulatorSkeleton from "@/components/ui/SimulatorSkeleton";
+import { useAmbientSound } from "@/hooks/useAmbientSound";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,6 +77,7 @@ const NormalizationSimulator = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+  const { playTap, playStart, playComplete } = useAmbientSound();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -140,11 +142,13 @@ const NormalizationSimulator = () => {
     // Check cache first
     if (simulationCache.has(cacheKey)) {
       setResult(simulationCache.get(cacheKey)!);
+      playComplete();
       return;
     }
 
     setIsLoading(true);
     setResult(null);
+    playStart();
 
     try {
       const { data, error } = await supabase.functions.invoke("simulate-behavior-v2", {
@@ -168,6 +172,7 @@ const NormalizationSimulator = () => {
         // Cache the result
         simulationCache.set(cacheKey, normalizedResult);
         setResult(normalizedResult);
+        playComplete();
       } else {
         toast.error("Simulation failed");
       }
@@ -176,13 +181,14 @@ const NormalizationSimulator = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [playStart, playComplete]);
 
   const handleReset = useCallback(() => {
     setResult(null);
     setDisplayBehavior("");
     setCustomInput("");
-  }, []);
+    playTap();
+  }, [playTap]);
 
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6">

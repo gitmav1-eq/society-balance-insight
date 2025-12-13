@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import SoundToggle from "./SoundToggle";
 import { Menu, X } from "lucide-react";
 
 type HeaderMode = "landing" | "simulation" | "drift";
@@ -128,11 +129,13 @@ const DynamicHeader = ({ mode = "landing", breadcrumb }: DynamicHeaderProps) => 
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2">
+            <SoundToggle />
             <ThemeToggle />
           </div>
 
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-1">
+            <SoundToggle />
             <ThemeToggle />
             <button
               className="p-2 text-muted-foreground"
