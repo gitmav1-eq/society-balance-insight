@@ -78,19 +78,28 @@ serve(async (req) => {
     if (jsonMatch) {
       try {
         const parsed = JSON.parse(jsonMatch[0]);
-        // Normalize key variations (AI sometimes returns 'impact' instead of 'individual')
+        
+        // Handle case where AI nests all fields under one key
+        const source = typeof parsed.individual === 'object' && parsed.individual !== null 
+          ? parsed.individual 
+          : parsed;
+        
+        // Normalize and ensure all values are strings
         const result = {
-          individual: parsed.individual || parsed.impact || "",
-          collective: parsed.collective || "",
-          pressure: parsed.pressure || "",
-          lever: parsed.lever || ""
+          individual: String(source.individual || source.impact || ""),
+          collective: String(source.collective || ""),
+          pressure: String(source.pressure || ""),
+          lever: String(source.lever || "")
         };
+        
+        console.log("Parsed result:", JSON.stringify(result));
+        
         return new Response(
           JSON.stringify({ result }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-      } catch {
-        console.error("JSON parse error");
+      } catch (e) {
+        console.error("JSON parse error:", e);
       }
     }
 

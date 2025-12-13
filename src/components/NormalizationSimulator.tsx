@@ -102,11 +102,17 @@ const NormalizationSimulator = () => {
 
       if (error) throw error;
       if (data?.result && typeof data.result === 'object') {
+        const rawResult = data.result;
+        // Handle nested structure where AI puts all fields under 'individual'
+        const source = typeof rawResult.individual === 'object' && rawResult.individual !== null
+          ? rawResult.individual
+          : rawResult;
+        
         const normalizedResult: SimulationResult = {
-          individual: String(data.result.individual || data.result.impact || ""),
-          collective: String(data.result.collective || ""),
-          pressure: String(data.result.pressure || ""),
-          lever: String(data.result.lever || "")
+          individual: String(source.individual || source.impact || ""),
+          collective: String(source.collective || ""),
+          pressure: String(source.pressure || ""),
+          lever: String(source.lever || "")
         };
         // Cache the result
         simulationCache.set(cacheKey, normalizedResult);
