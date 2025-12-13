@@ -28,7 +28,8 @@ interface SimulationResult {
 const simulationCache = new Map<string, SimulationResult>();
 
 const NormalizationSimulator = () => {
-  const [behavior, setBehavior] = useState("");
+  const [customInput, setCustomInput] = useState("");
+  const [displayBehavior, setDisplayBehavior] = useState("");
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -82,7 +83,8 @@ const NormalizationSimulator = () => {
     }
 
     const cacheKey = behaviorToSimulate.toLowerCase().trim();
-    setBehavior(behaviorToSimulate);
+    setDisplayBehavior(behaviorToSimulate);
+    setCustomInput("");
 
     // Check cache first
     if (simulationCache.has(cacheKey)) {
@@ -121,7 +123,8 @@ const NormalizationSimulator = () => {
 
   const handleReset = useCallback(() => {
     setResult(null);
-    setBehavior("");
+    setDisplayBehavior("");
+    setCustomInput("");
   }, []);
 
   return (
@@ -158,12 +161,12 @@ const NormalizationSimulator = () => {
               <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-4">OR DESCRIBE YOUR OWN</p>
               <Textarea
                 placeholder="Enter a behavior to explore..."
-                value={behavior}
-                onChange={(e) => setBehavior(e.target.value)}
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
                 className="min-h-[80px] resize-none bg-background/50 border-border/50 mb-4"
                 disabled={isLoading}
               />
-              <Button onClick={() => handleSimulate(behavior)} disabled={isLoading || !behavior.trim()} className="w-full md:w-auto px-8">
+              <Button onClick={() => handleSimulate(customInput)} disabled={isLoading || !customInput.trim()} className="w-full md:w-auto px-8">
                 Explore
               </Button>
             </div>
@@ -174,7 +177,7 @@ const NormalizationSimulator = () => {
           <div className="space-y-6 animate-fade-in">
             <div className="p-4 bg-primary/10 border border-primary/30">
               <p className="font-mono text-[9px] tracking-widest text-primary mb-1">EXPLORING</p>
-              <p className="text-lg font-medium">{behavior}</p>
+              <p className="text-lg font-medium">{displayBehavior}</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
