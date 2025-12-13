@@ -7,6 +7,7 @@ import DailySignal from "@/components/DailySignal";
 import DynamicFooter from "@/components/DynamicFooter";
 import ArchivistChat from "@/components/ArchivistChat";
 import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
+import CommandPalette from "@/components/CommandPalette";
 import { useKeyboardShortcuts, scrollToSection, ShortcutAction } from "@/hooks/useKeyboardShortcuts";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 
@@ -124,6 +125,10 @@ const Index = () => {
       <DynamicFooter />
       <ArchivistChat isOpenProp={isArchivistOpen} onOpenChange={setIsArchivistOpen} />
       <KeyboardShortcutsHelp open={showHelp} onOpenChange={setShowHelp} />
+      <CommandPalette 
+        onOpenArchivist={() => setIsArchivistOpen(true)} 
+        onShowShortcuts={() => setShowHelp(true)} 
+      />
     </div>
   );
 };
