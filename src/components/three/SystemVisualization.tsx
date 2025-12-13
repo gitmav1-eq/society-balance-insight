@@ -67,21 +67,21 @@ function CentralSphere({ theme }: { theme: string }) {
   );
 }
 
-function OrbitRing({ radius, speed, theme, opacity = 0.2 }: { radius: number; speed: number; theme: string; opacity?: number }) {
+function OrbitRing({ radius, speed, theme, opacity = 0.1 }: { radius: number; speed: number; theme: string; opacity?: number }) {
   const groupRef = useRef<THREE.Group>(null);
-  const dotRef = useRef<THREE.Mesh>(null);
   
   const color = useMemo(() => {
     switch (theme) {
       case "ambient": return "#22d3ee";
-      case "light": return "#6366f1";
-      default: return "#818cf8";
+      case "light": return "#94a3b8";
+      default: return "#64748b";
     }
   }, [theme]);
 
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.z = state.clock.elapsedTime * speed;
+      // Much slower rotation
+      groupRef.current.rotation.z = state.clock.elapsedTime * speed * 0.3;
     }
   });
 
@@ -104,21 +104,21 @@ function OrbitRing({ radius, speed, theme, opacity = 0.2 }: { radius: number; sp
         <bufferGeometry attach="geometry" {...lineGeometry} />
         <lineBasicMaterial color={color} transparent opacity={opacity} />
       </line>
-      <mesh ref={dotRef} position={[radius, 0, 0]}>
-        <sphereGeometry args={[0.04, 16, 16]} />
-        <meshBasicMaterial color={color} />
+      <mesh position={[radius, 0, 0]}>
+        <sphereGeometry args={[0.03, 12, 12]} />
+        <meshBasicMaterial color={color} transparent opacity={0.6} />
       </mesh>
     </group>
   );
 }
 
-function StarField({ count = 200 }: { count?: number }) {
+function StarField({ count = 150 }: { count?: number }) {
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      pos[i * 3] = (Math.random() - 0.5) * 25;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 25;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 25;
     }
     return pos;
   }, [count]);
@@ -128,7 +128,7 @@ function StarField({ count = 200 }: { count?: number }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
       </bufferGeometry>
-      <pointsMaterial color="#ffffff" size={0.02} transparent opacity={0.4} sizeAttenuation />
+      <pointsMaterial color="#ffffff" size={0.015} transparent opacity={0.25} sizeAttenuation />
     </points>
   );
 }
@@ -149,9 +149,9 @@ function OrbitSystem({ theme }: { theme: string }) {
   return (
     <group ref={groupRef}>
       <CentralSphere theme={theme} />
-      <OrbitRing radius={1.5} speed={0.08} theme={theme} opacity={0.3} />
-      <OrbitRing radius={2.2} speed={-0.05} theme={theme} opacity={0.2} />
-      <OrbitRing radius={3} speed={0.03} theme={theme} opacity={0.15} />
+      <OrbitRing radius={1.8} speed={0.04} theme={theme} opacity={0.15} />
+      <OrbitRing radius={2.6} speed={-0.025} theme={theme} opacity={0.1} />
+      <OrbitRing radius={3.5} speed={0.015} theme={theme} opacity={0.08} />
       <StarField />
     </group>
   );

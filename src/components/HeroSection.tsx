@@ -44,10 +44,10 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      <div className="absolute inset-0 -z-10 opacity-60">
+      <div className="absolute inset-0 -z-10 opacity-40">
         <SystemVisualization theme={theme} />
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/10 via-background/40 to-background" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/5 via-background/30 to-background" />
 
       <div ref={contentRef} className="relative z-10 max-w-3xl mx-auto px-6 text-center">
         <p className="hero-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/60 mb-8">

@@ -17,9 +17,10 @@ const Header = () => {
   }, []);
 
   const navItems = [
+    { label: "Explore Futures", href: "#explore" },
     { label: "Simulate", href: "#simulator" },
-    { label: "Why This Matters", href: "#learn" },
-    { label: "Learn", href: "#about" },
+    { label: "Society Ledger", href: "#ledger" },
+    { label: "About", href: "#about" },
   ];
 
   const scrollToSection = (href: string) => {

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 
-const weeklyInsights = [
+const insights = [
   "Civilizations fail quietly, long before they fail suddenly.",
   "What one generation normalizes, the next inherits as baseline.",
   "The cost of convenience is always paid — just not always by you.",
@@ -9,54 +8,42 @@ const weeklyInsights = [
   "Thirty years is long enough to change everything, short enough to ignore.",
 ];
 
-const suggestedSimulations = [
-  { label: "Credit-first lifestyle", id: "credit" },
-  { label: "Delayed savings culture", id: "savings" },
-  { label: "Gig work without safety nets", id: "gig" },
-];
-
 const MultiLayerFooter = () => {
   const [currentInsight, setCurrentInsight] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentInsight((prev) => (prev + 1) % weeklyInsights.length);
-    }, 30000);
+      setCurrentInsight((prev) => (prev + 1) % insights.length);
+    }, 45000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToSimulator = () => {
-    document.querySelector("#simulator")?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <footer className="border-t border-border/20">
+    <footer className="border-t border-border/10">
       {/* About Section */}
-      <section id="about" className="py-14 px-6 border-b border-border/20">
-        <div className="max-w-3xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 text-center md:text-left">
-            <div>
-              <p className="font-mono text-[9px] tracking-widest text-muted-foreground/60 mb-2">BUILT FOR</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Public understanding. Helping people think longer-term about everyday decisions.
-              </p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest text-muted-foreground/60 mb-2">ACCESSIBILITY</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Plain language. No finance jargon. Designed for everyone.
-              </p>
-            </div>
-          </div>
+      <section id="about" className="py-16 px-6 border-b border-border/10">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="font-mono text-[9px] tracking-[0.5em] text-muted-foreground/40 mb-6">
+            ABOUT THIS PROJECT
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+            SOCIETY.EXE is a public intelligence platform designed to help people 
+            understand how everyday behaviors shape society over decades.
+          </p>
+          <p className="text-sm text-muted-foreground/70 leading-relaxed">
+            No financial advice. No tracking. No manipulation.
+            <br />
+            Just clarity for everyone.
+          </p>
         </div>
       </section>
 
       {/* Insight */}
-      <div className="py-12 px-6 border-b border-border/20">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-base md:text-lg leading-relaxed italic text-foreground/70">
-            "{weeklyInsights[currentInsight]}"
+      <div className="py-10 px-6 border-b border-border/10">
+        <div className="max-w-xl mx-auto text-center">
+          <p className="text-base leading-relaxed italic text-foreground/60">
+            "{insights[currentInsight]}"
           </p>
         </div>
       </div>
@@ -64,13 +51,11 @@ const MultiLayerFooter = () => {
       {/* Identity */}
       <div className="py-5 px-6">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="font-mono text-sm tracking-widest font-medium">SOCIETY.EXE</span>
-          <div className="flex items-center gap-6 text-[10px] font-mono text-muted-foreground/50">
-            <span>No tracking</span>
+          <span className="font-mono text-xs tracking-widest text-muted-foreground/60">SOCIETY.EXE</span>
+          <div className="flex items-center gap-5 text-[9px] font-mono text-muted-foreground/40">
+            <span>Built for public good</span>
             <span>•</span>
-            <span>No accounts</span>
-            <span>•</span>
-            <span>Open understanding</span>
+            <span>No accounts required</span>
           </div>
         </div>
       </div>
