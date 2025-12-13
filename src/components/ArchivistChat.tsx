@@ -18,13 +18,22 @@ const starterQuestions = [
   "Why do small habits compound into systemic change?",
 ];
 
-const ArchivistChat = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface ArchivistChatProps {
+  isOpenProp?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const ArchivistChat = ({ isOpenProp, onOpenChange }: ArchivistChatProps = {}) => {
+  const [isOpenInternal, setIsOpenInternal] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { playTap, playMessage } = useAmbientSound();
+
+  // Use controlled state if props are provided
+  const isOpen = isOpenProp !== undefined ? isOpenProp : isOpenInternal;
+  const setIsOpen = onOpenChange || setIsOpenInternal;
 
   useEffect(() => {
     if (scrollRef.current) {
