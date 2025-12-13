@@ -10,11 +10,11 @@ import SimulatorSkeleton from "@/components/ui/SimulatorSkeleton";
 gsap.registerPlugin(ScrollTrigger);
 
 const presetBehaviors = [
-  "EMI culture",
-  "Delayed savings",
-  "Lifestyle inflation",
-  "Gig work without safety nets",
-  "Credit dependence",
+  "Buying on credit as default",
+  "Treating savings as optional",
+  "Lifestyle inflation with income",
+  "Gig work without protections",
+  "Short-term thinking as normal",
 ];
 
 interface SimulationResult {
@@ -103,13 +103,15 @@ const NormalizationSimulator = () => {
   };
 
   return (
-    <section ref={sectionRef} id="simulator" className="py-24 px-6 md:px-12 lg:px-24 border-t border-border/30">
-      <div className="max-w-5xl mx-auto">
-        <div ref={headerRef} className="text-center mb-16">
-          <p className="sim-animate font-mono text-[9px] tracking-[0.4em] text-muted-foreground mb-3">BEHAVIOR SIMULATOR</p>
-          <h2 className="sim-animate text-2xl md:text-3xl lg:text-4xl font-bold mb-3">What should we explore?</h2>
-          <p className="sim-animate text-muted-foreground max-w-lg mx-auto text-sm">
-            Select a behavior. See how it ripples across decades.
+    <section ref={sectionRef} id="simulator" className="py-24 px-6">
+      <div className="max-w-3xl mx-auto">
+        <div ref={headerRef} className="text-center mb-12">
+          <p className="sim-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/60 mb-4">FUTURE ORBIT</p>
+          <h2 className="sim-animate text-2xl md:text-3xl font-bold mb-3">
+            Choose a common behavior.
+          </h2>
+          <p className="sim-animate text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
+            See where society drifts if it stays in this orbit.
           </p>
         </div>
 

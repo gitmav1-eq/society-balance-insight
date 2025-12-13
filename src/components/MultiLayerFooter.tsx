@@ -31,82 +31,41 @@ const MultiLayerFooter = () => {
   };
 
   return (
-    <footer className="border-t border-border/30">
-      {/* Level 1: Engagement */}
-      <div className="py-16 px-6 border-b border-border/20">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="font-mono text-[9px] tracking-[0.4em] text-muted-foreground mb-4">
-            EXPLORE NEXT
-          </p>
-          <h3 className="text-xl font-medium mb-8">
-            What behavior would you like to understand?
-          </h3>
-          
-          <div className="flex flex-wrap justify-center gap-3">
-            {suggestedSimulations.map((sim) => (
-              <Button
-                key={sim.id}
-                variant="outline"
-                size="sm"
-                onClick={scrollToSimulator}
-                className="text-xs"
-              >
-                {sim.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Level 2: Trust - About Section */}
-      <section id="about" className="py-12 px-6 border-b border-border/20 bg-card/5">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
+    <footer className="border-t border-border/20">
+      {/* About Section */}
+      <section id="about" className="py-14 px-6 border-b border-border/20">
+        <div className="max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 text-center md:text-left">
             <div>
-              <p className="font-mono text-[9px] tracking-widest text-primary mb-2">MISSION</p>
+              <p className="font-mono text-[9px] tracking-widest text-muted-foreground/60 mb-2">BUILT FOR</p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Help people understand how everyday choices shape society over decades.
+                Public understanding. Helping people think longer-term about everyday decisions.
               </p>
             </div>
             <div>
-              <p className="font-mono text-[9px] tracking-widest text-primary mb-2">ETHICS</p>
+              <p className="font-mono text-[9px] tracking-widest text-muted-foreground/60 mb-2">ACCESSIBILITY</p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                No manipulation. No addiction mechanics. No personal data collected.
-              </p>
-            </div>
-            <div>
-              <p className="font-mono text-[9px] tracking-widest text-primary mb-2">ACCESSIBILITY</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Plain language for everyone. Works on all devices.
+                Plain language. No finance jargon. Designed for everyone.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Level 3: Memory */}
-      <div className="py-14 px-6 border-b border-border/20">
+      {/* Insight */}
+      <div className="py-12 px-6 border-b border-border/20">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="font-mono text-[9px] tracking-widest text-muted-foreground/60 mb-4">
-            INSIGHT OF THE WEEK
-          </p>
-          <p className="text-lg md:text-xl leading-relaxed italic text-foreground/80">
+          <p className="text-base md:text-lg leading-relaxed italic text-foreground/70">
             "{weeklyInsights[currentInsight]}"
           </p>
         </div>
       </div>
 
-      {/* Identity Bar */}
-      <div className="py-5 px-6 bg-background">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-sm tracking-widest font-bold text-primary">ORBIT</span>
-            <span className="hidden md:inline text-border">|</span>
-            <span className="hidden md:inline text-xs text-muted-foreground">
-              Understand how decisions move society
-            </span>
-          </div>
-          <div className="flex items-center gap-6 text-[10px] font-mono text-muted-foreground/60">
+      {/* Identity */}
+      <div className="py-5 px-6">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="font-mono text-sm tracking-widest font-medium">SOCIETY.EXE</span>
+          <div className="flex items-center gap-6 text-[10px] font-mono text-muted-foreground/50">
             <span>No tracking</span>
             <span>•</span>
             <span>No accounts</span>

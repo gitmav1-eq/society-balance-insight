@@ -56,44 +56,44 @@ const ImpactVisualization = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="impact" className="relative py-32 px-6 md:px-12 lg:px-24 border-t border-border overflow-hidden">
-      <div className="absolute inset-0 z-0">
+    <section ref={sectionRef} id="learn" className="relative py-24 px-6 overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-40">
         <SystemVisualization theme={theme} />
       </div>
 
-      <div ref={contentRef} className="relative z-10 max-w-4xl mx-auto text-center">
-        <p className="impact-animate font-mono text-[10px] tracking-[0.4em] text-primary mb-4">
-          SYSTEM VISUALIZATION
+      <div ref={contentRef} className="relative z-10 max-w-3xl mx-auto text-center">
+        <p className="impact-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/60 mb-4">
+          WHY THIS MATTERS
         </p>
         
-        <h2 className="impact-animate font-serif text-3xl md:text-4xl lg:text-5xl mb-6">
-          Nodes become systems.
+        <h2 className="impact-animate text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
+          Individual choices become
           <br />
-          <span className="text-muted-foreground">Systems become societies.</span>
+          <span className="text-muted-foreground">collective patterns.</span>
         </h2>
         
-        <p className="impact-animate text-muted-foreground max-w-xl mx-auto mb-16 leading-relaxed">
-          Each point represents an individual. Lines form as behaviors scale. 
-          The ring represents time — 30 years of compounding change.
+        <p className="impact-animate text-muted-foreground max-w-lg mx-auto mb-12 leading-relaxed text-sm">
+          When millions repeat the same behavior, it reshapes economies, 
+          policies, and generations. Understanding this is the first step.
         </p>
 
-        <div ref={cardsRef} className="grid md:grid-cols-3 gap-4">
-          <div className="impact-card p-6 border border-border bg-background/90 backdrop-blur-sm">
-            <p className="font-mono text-[9px] tracking-widest text-primary mb-2">NODES</p>
-            <p className="font-serif text-xl mb-1">Individuals</p>
-            <p className="text-xs text-muted-foreground">Each making daily choices</p>
+        <div ref={cardsRef} className="grid md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+          <div className="impact-card p-5 border border-border/30 bg-background/80 backdrop-blur-sm">
+            <p className="font-mono text-[9px] tracking-widest text-primary/70 mb-2">TODAY</p>
+            <p className="text-base font-medium mb-1">Individual</p>
+            <p className="text-xs text-muted-foreground">One choice, one moment</p>
           </div>
           
-          <div className="impact-card p-6 border border-border bg-background/90 backdrop-blur-sm">
-            <p className="font-mono text-[9px] tracking-widest text-primary mb-2">LINES</p>
-            <p className="font-serif text-xl mb-1">Systems</p>
-            <p className="text-xs text-muted-foreground">Connections create patterns</p>
+          <div className="impact-card p-5 border border-border/30 bg-background/80 backdrop-blur-sm">
+            <p className="font-mono text-[9px] tracking-widest text-primary/70 mb-2">10 YEARS</p>
+            <p className="text-base font-medium mb-1">Pattern</p>
+            <p className="text-xs text-muted-foreground">Habits become trends</p>
           </div>
           
-          <div className="impact-card p-6 border border-border bg-background/90 backdrop-blur-sm">
-            <p className="font-mono text-[9px] tracking-widest text-primary mb-2">RING</p>
-            <p className="font-serif text-xl mb-1">Time</p>
-            <p className="text-xs text-muted-foreground">Decades of accumulation</p>
+          <div className="impact-card p-5 border border-border/30 bg-background/80 backdrop-blur-sm">
+            <p className="font-mono text-[9px] tracking-widest text-primary/70 mb-2">30 YEARS</p>
+            <p className="text-base font-medium mb-1">Structure</p>
+            <p className="text-xs text-muted-foreground">Generations inherit</p>
           </div>
         </div>
       </div>

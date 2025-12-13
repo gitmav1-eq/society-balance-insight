@@ -18,9 +18,8 @@ const Header = () => {
 
   const navItems = [
     { label: "Simulate", href: "#simulator" },
-    { label: "Learn", href: "#learn" },
-    { label: "Play", href: "#play" },
-    { label: "About", href: "#about" },
+    { label: "Why This Matters", href: "#learn" },
+    { label: "Learn", href: "#about" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -45,8 +44,8 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-mono text-lg tracking-widest font-bold text-primary">
-            ORBIT
+          <Link to="/" className="font-mono text-base tracking-widest font-bold">
+            SOCIETY.EXE
           </Link>
 
           {/* Desktop Nav */}

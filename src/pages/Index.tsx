@@ -2,10 +2,10 @@ import { useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import NormalizationSimulator from "@/components/NormalizationSimulator";
-import PlaySection from "@/components/PlaySection";
 import ImpactVisualization from "@/components/ImpactVisualization";
+import DailySignal from "@/components/DailySignal";
+import CourseCorrection from "@/components/CourseCorrection";
 import MultiLayerFooter from "@/components/MultiLayerFooter";
-import LiveSocietyPulse from "@/components/LiveSocietyPulse";
 
 const Index = () => {
   const simulatorRef = useRef<HTMLDivElement>(null);
@@ -25,15 +25,14 @@ const Index = () => {
           <NormalizationSimulator />
         </div>
         
-        <section id="learn">
-          <ImpactVisualization />
-        </section>
+        <ImpactVisualization />
         
-        <PlaySection />
+        <DailySignal />
+        
+        <CourseCorrection />
       </main>
       
       <MultiLayerFooter />
-      <LiveSocietyPulse />
     </div>
   );
 };
