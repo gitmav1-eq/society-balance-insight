@@ -1,6 +1,39 @@
 import { useRef, useMemo, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+function ParallaxCamera() {
+  const { camera } = useThree();
+  const scrollProgress = useRef({ value: 0 });
+
+  useEffect(() => {
+    const trigger = ScrollTrigger.create({
+      trigger: document.body,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1,
+      onUpdate: (self) => {
+        scrollProgress.current.value = self.progress;
+      },
+    });
+
+    return () => trigger.kill();
+  }, []);
+
+  useFrame(() => {
+    const progress = scrollProgress.current.value;
+    camera.position.z = 7 + progress * 3;
+    camera.position.y = progress * 2 - 1;
+    camera.position.x = Math.sin(progress * Math.PI) * 1.5;
+    camera.lookAt(0, 0, 0);
+  });
+
+  return null;
+}
 
 function SocietyNodes({ theme, count = 120 }: { theme: string; count?: number }) {
   const pointsRef = useRef<THREE.Points>(null);
@@ -83,6 +116,7 @@ const SystemVisualization = ({ theme, className = "" }: { theme: string; classNa
     <div className={`w-full h-full ${className}`}>
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }} gl={{ antialias: true, alpha: true }} style={{ background: "transparent" }} dpr={[1, 1.5]}>
         <ambientLight intensity={0.2} />
+        <ParallaxCamera />
         <SocietyNodes theme={theme} />
       </Canvas>
     </div>
