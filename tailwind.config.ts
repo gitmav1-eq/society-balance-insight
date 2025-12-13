@@ -126,6 +126,44 @@ export default {
 				'100%': {
 					transform: 'translate(0, 0)'
 				}
+			},
+			'confetti-fall': {
+				'0%': {
+					transform: 'translateY(0) rotate(0deg)',
+					opacity: '1'
+				},
+				'100%': {
+					transform: 'translateY(100vh) rotate(720deg)',
+					opacity: '0'
+				}
+			},
+			'confetti-spin': {
+				'0%': {
+					transform: 'rotateX(0) rotateY(0)'
+				},
+				'100%': {
+					transform: 'rotateX(360deg) rotateY(180deg)'
+				}
+			},
+			'fade-in': {
+				'0%': {
+					opacity: '0',
+					transform: 'translateY(10px)'
+				},
+				'100%': {
+					opacity: '1',
+					transform: 'translateY(0)'
+				}
+			},
+			'scale-in': {
+				'0%': {
+					opacity: '0',
+					transform: 'scale(0.9)'
+				},
+				'100%': {
+					opacity: '1',
+					transform: 'scale(1)'
+				}
 			}
 		},
 		animation: {
@@ -134,7 +172,11 @@ export default {
 			'nebula-pulse-1': 'nebula-pulse-1 12s ease-in-out infinite',
 			'nebula-pulse-2': 'nebula-pulse-2 15s ease-in-out infinite',
 			'nebula-pulse-3': 'nebula-pulse-3 10s ease-in-out infinite',
-			'nebula-float': 'nebula-float 20s ease-in-out infinite'
+			'nebula-float': 'nebula-float 20s ease-in-out infinite',
+			'confetti-fall': 'confetti-fall 3s ease-out forwards',
+			'confetti-spin': 'confetti-spin 1s linear infinite',
+			'fade-in': 'fade-in 0.3s ease-out',
+			'scale-in': 'scale-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
 		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',
