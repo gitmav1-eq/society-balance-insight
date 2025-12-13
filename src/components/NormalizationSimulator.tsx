@@ -195,7 +195,7 @@ const NormalizationSimulator = () => {
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6 relative overflow-hidden">
       {/* Cosmic particle background */}
-      <CosmicParticles />
+      <CosmicParticles particleCount={35} showShootingStars intensity="low" />
       
       <div className="max-w-3xl mx-auto relative z-10">
         <div ref={headerRef} className="text-center mb-14">
