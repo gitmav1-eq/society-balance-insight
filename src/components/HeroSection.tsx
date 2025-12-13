@@ -49,25 +49,25 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       </div>
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/10 via-background/40 to-background" />
 
-      <div ref={contentRef} className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        <p className="hero-animate font-mono text-[10px] tracking-[0.5em] text-muted-foreground mb-6">
-          UNDERSTAND HOW EVERYDAY DECISIONS MOVE SOCIETY
+      <div ref={contentRef} className="relative z-10 max-w-3xl mx-auto px-6 text-center">
+        <p className="hero-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/60 mb-8">
+          PUBLIC UNDERSTANDING ENGINE
         </p>
         
-        <h1 className="hero-animate text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-6 font-bold">
-          Society is a shared spaceship.
+        <h1 className="hero-animate text-3xl md:text-4xl lg:text-5xl leading-[1.2] mb-6 font-bold">
+          Small actions.
           <br />
-          <span className="text-primary">Small actions change its orbit.</span>
+          <span className="text-primary">Planetary consequences.</span>
         </h1>
         
-        <p className="hero-animate text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-          Explore how financial behaviors compound across decades.
-          No jargon. No dashboards. Just clarity.
+        <p className="hero-animate text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
+          Explore how everyday behaviors shape society over decades.
+          No jargon. No dashboards. Just understanding.
         </p>
         
-        <div className="hero-animate flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="hero-animate">
           <Button onClick={onSimulateClick} size="lg" className="px-8 py-6 text-base font-medium">
-            Explore a Behavior
+            Begin Exploring
           </Button>
         </div>
       </div>
