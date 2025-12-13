@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import FutureDrift from "@/components/FutureDrift";
 import NormalizationSimulator from "@/components/NormalizationSimulator";
-import ImpactVisualization from "@/components/ImpactVisualization";
+import ExploreMode from "@/components/ExploreMode";
 import DailySignal from "@/components/DailySignal";
-import CourseCorrection from "@/components/CourseCorrection";
 import MultiLayerFooter from "@/components/MultiLayerFooter";
 
 const Index = () => {
@@ -15,21 +15,21 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
       <Header />
       
       <main>
         <HeroSection onSimulateClick={scrollToSimulator} />
         
+        <FutureDrift />
+        
         <div ref={simulatorRef}>
           <NormalizationSimulator />
         </div>
         
-        <ImpactVisualization />
+        <ExploreMode />
         
         <DailySignal />
-        
-        <CourseCorrection />
       </main>
       
       <MultiLayerFooter />
