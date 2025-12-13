@@ -118,9 +118,12 @@ const CosmicParticles = ({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.016;
 
-      // Get primary color from CSS variable
+      // Get primary color from CSS variable and convert to proper format
       const computedStyle = getComputedStyle(document.documentElement);
       const primaryHsl = computedStyle.getPropertyValue("--primary").trim();
+      
+      // Helper function to create proper hsl color with alpha
+      const hslColor = (alpha: number) => `hsl(${primaryHsl} / ${alpha})`;
 
       // Spawn shooting stars occasionally (every 8-15 seconds)
       if (showShootingStars && time - lastShootingStarTime > 8 + Math.random() * 7) {
@@ -147,7 +150,7 @@ const CosmicParticles = ({
           
           ctx.beginPath();
           ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${primaryHsl}, ${trailOpacity})`;
+          ctx.fillStyle = hslColor(trailOpacity);
           ctx.fill();
         });
 
@@ -156,8 +159,8 @@ const CosmicParticles = ({
           star.x, star.y, 0,
           star.x, star.y, 8
         );
-        headGradient.addColorStop(0, `hsla(${primaryHsl}, ${star.opacity * opacityMultiplier})`);
-        headGradient.addColorStop(1, `hsla(${primaryHsl}, 0)`);
+        headGradient.addColorStop(0, hslColor(star.opacity * opacityMultiplier));
+        headGradient.addColorStop(1, hslColor(0));
         ctx.beginPath();
         ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
         ctx.fillStyle = headGradient;
@@ -201,9 +204,9 @@ const CosmicParticles = ({
           particle.x, particle.y, 0,
           particle.x, particle.y, particle.size * 2.5
         );
-        gradient.addColorStop(0, `hsla(${primaryHsl}, ${currentOpacity})`);
-        gradient.addColorStop(0.5, `hsla(${primaryHsl}, ${currentOpacity * 0.2})`);
-        gradient.addColorStop(1, `hsla(${primaryHsl}, 0)`);
+        gradient.addColorStop(0, hslColor(currentOpacity));
+        gradient.addColorStop(0.5, hslColor(currentOpacity * 0.2));
+        gradient.addColorStop(1, hslColor(0));
         
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size * 2.5, 0, Math.PI * 2);
@@ -213,7 +216,7 @@ const CosmicParticles = ({
         // Core
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size * 0.4, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${primaryHsl}, ${currentOpacity + 0.1})`;
+        ctx.fillStyle = hslColor(Math.min(currentOpacity + 0.1, 1));
         ctx.fill();
       });
 
@@ -229,7 +232,7 @@ const CosmicParticles = ({
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `hsla(${primaryHsl}, ${opacity})`;
+            ctx.strokeStyle = hslColor(opacity);
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
