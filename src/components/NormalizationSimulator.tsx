@@ -216,9 +216,31 @@ const NormalizationSimulator = () => {
 
             <div className="border-t border-border/30 pt-6">
               <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-2">OR DESCRIBE YOUR OWN</p>
-              <p className="text-[11px] text-muted-foreground/60 mb-4">
+              <p className="text-[11px] text-muted-foreground/60 mb-3">
                 Describe a financial behavior, spending habit, or economic choice
               </p>
+              
+              {/* Example prompts */}
+              <div className="mb-4">
+                <p className="text-[10px] text-muted-foreground/40 mb-2">Try something like:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Skipping health insurance to save money",
+                    "Using BNPL for everyday purchases",
+                    "Living paycheck to paycheck",
+                    "Not building an emergency fund"
+                  ].map((example, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCustomInput(example)}
+                      className="text-[10px] px-2 py-1 text-muted-foreground/60 hover:text-foreground border border-border/20 hover:border-border/50 rounded-sm transition-colors"
+                    >
+                      {example}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <Textarea
                 placeholder="e.g., Taking multiple subscriptions, avoiding health insurance, relying on credit cards..."
                 value={customInput}
