@@ -5,23 +5,29 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const systemPrompt = `You are the AI Guide for SOCIETY.EXE, a platform that helps users understand systemic financial patterns in society.
+const systemPrompt = `You are ORBIT, a calm and helpful guide for SOCIETY.EXE — a platform that helps people understand how everyday behaviors shape society over decades.
 
-Your role is to provide educational explanations about why certain financial behaviors matter at a societal level. You are NOT a chatbot — you are a guide.
+Your role:
+- Explain concepts in ONE simple sentence when possible
+- Use plain language, no finance jargon
+- Be calm, thoughtful, and non-judgmental
+- Use the orbit/space metaphor when helpful (e.g., "stability" = "staying in orbit", "pressure" = "gravitational pull")
+- Never give financial advice
+- Keep responses under 50 words unless more context is truly needed
 
-Your tone:
-- Calm and measured
-- Educational and illuminating
-- Non-judgmental
-- Thoughtful and analytical
+Key concepts to explain simply:
+- "Orbit" = the trajectory society is on based on collective behaviors
+- "Drift" = when small choices slowly change direction
+- "Stability" = having flexibility and resilience over time
+- "Pressure" = when burdens accumulate
 
-When explaining concepts:
-- Focus on systemic connections, not individual advice
-- Explain cause and effect relationships
-- Highlight time scales and compounding effects
-- Connect individual behaviors to collective outcomes
+Always be helpful, brief, and encouraging of curiosity.`;
 
-Keep responses concise (2-3 paragraphs maximum). Be profound, not verbose.`;
+const fallbacks: Record<string, string> = {
+  "what does orbit mean here?": "Orbit represents society's trajectory — the direction we're heading based on the choices millions of people make every day.",
+  "how do small choices matter?": "Like gravity, small repeated choices pull society in a direction. One person buying on credit is nothing. Millions doing it reshapes the economy.",
+  "why think long-term?": "Short-term thinking feels easier, but consequences compound. What's comfortable today can become tomorrow's pressure.",
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -29,25 +35,32 @@ serve(async (req) => {
   }
 
   try {
-    const { context } = await req.json();
+    const body = await req.json();
+    const question = body.question || body.context;
 
-    if (!context) {
-      return new Response(
-        JSON.stringify({ error: "Context is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!question) {
+      return new Response(JSON.stringify({ error: "Question is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY not configured");
-      return new Response(
-        JSON.stringify({ error: "AI service not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    
+    // Check fallbacks first
+    const lowerQ = question.toLowerCase().trim();
+    if (fallbacks[lowerQ]) {
+      return new Response(JSON.stringify({ answer: fallbacks[lowerQ], explanation: fallbacks[lowerQ] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    console.log("AI Guide processing context:", context.substring(0, 100));
+    if (!LOVABLE_API_KEY) {
+      const defaultAnswer = "Every choice creates a ripple. Small actions, repeated by many, shape the future we all inherit.";
+      return new Response(JSON.stringify({ answer: defaultAnswer, explanation: defaultAnswer }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -59,42 +72,31 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Explain why this matters at a societal level: "${context}"` }
+          { role: "user", content: question },
         ],
+        max_tokens: 150,
       }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Service busy. Please try again." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({ error: "Failed to generate explanation" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      console.error("AI error:", response.status);
+      const fallbackAnswer = "Every choice creates a ripple. Small actions, repeated by many, shape the future we all inherit.";
+      return new Response(JSON.stringify({ answer: fallbackAnswer, explanation: fallbackAnswer }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const data = await response.json();
-    const explanation = data.choices?.[0]?.message?.content;
+    const answer = data.choices?.[0]?.message?.content || "I'm here to help you understand. Try asking in a different way.";
 
-    console.log("AI Guide response generated successfully");
-
-    return new Response(
-      JSON.stringify({ explanation }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ answer, explanation: answer }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error("AI Guide error:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    console.error("ai-guide error:", error);
+    const fallbackAnswer = "Every choice creates a ripple. Small actions, repeated by many, shape the future we all inherit.";
+    return new Response(JSON.stringify({ answer: fallbackAnswer, explanation: fallbackAnswer }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
