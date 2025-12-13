@@ -22,6 +22,15 @@ interface ShootingStar {
   trail: Array<{ x: number; y: number; opacity: number }>;
 }
 
+interface Ripple {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  opacity: number;
+  speed: number;
+}
+
 interface CosmicParticlesProps {
   particleCount?: number;
   showShootingStars?: boolean;
@@ -36,6 +45,7 @@ const CosmicParticles = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const shootingStarsRef = useRef<ShootingStar[]>([]);
+  const ripplesRef = useRef<Ripple[]>([]);
   const animationRef = useRef<number>();
   const mouseRef = useRef({ x: 0, y: 0 });
 
@@ -93,7 +103,30 @@ const CosmicParticles = ({
       };
     };
 
+    // Handle click to create ripple
+    const handleClick = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Create multiple ripples for a more cosmic effect
+      for (let i = 0; i < 3; i++) {
+        ripplesRef.current.push({
+          x,
+          y,
+          radius: 0,
+          maxRadius: 120 + i * 40,
+          opacity: 0.4 - i * 0.1,
+          speed: 3 + i * 0.5,
+        });
+      }
+    };
+
     canvas.addEventListener("mousemove", handleMouseMove);
+    
+    // Listen for clicks on parent element since canvas has pointer-events: none
+    const parent = canvas.parentElement;
+    parent?.addEventListener("click", handleClick);
 
     let time = 0;
     let lastShootingStarTime = 0;
@@ -239,6 +272,38 @@ const CosmicParticles = ({
         });
       });
 
+      // Draw and update ripples
+      ripplesRef.current = ripplesRef.current.filter((ripple) => {
+        ripple.radius += ripple.speed;
+        const progress = ripple.radius / ripple.maxRadius;
+        const currentOpacity = ripple.opacity * (1 - progress) * opacityMultiplier;
+
+        if (currentOpacity <= 0.01) return false;
+
+        // Draw ripple ring
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = hslColor(currentOpacity);
+        ctx.lineWidth = 2 * (1 - progress);
+        ctx.stroke();
+
+        // Draw inner glow
+        const glowGradient = ctx.createRadialGradient(
+          ripple.x, ripple.y, ripple.radius * 0.8,
+          ripple.x, ripple.y, ripple.radius
+        );
+        glowGradient.addColorStop(0, hslColor(0));
+        glowGradient.addColorStop(0.5, hslColor(currentOpacity * 0.3));
+        glowGradient.addColorStop(1, hslColor(0));
+        
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.fillStyle = glowGradient;
+        ctx.fill();
+
+        return true;
+      });
+
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -247,6 +312,7 @@ const CosmicParticles = ({
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       canvas.removeEventListener("mousemove", handleMouseMove);
+      parent?.removeEventListener("click", handleClick);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
