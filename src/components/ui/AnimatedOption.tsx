@@ -32,10 +32,9 @@ const AnimatedOption = React.forwardRef<HTMLButtonElement, AnimatedOptionProps>(
           isSelected
             ? "border-primary/50 bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.15)]"
             : "border-border/30 hover:border-primary/40 bg-background/30 hover:bg-primary/5",
-          isDisabled && !isSelected && "opacity-40 hover:scale-100",
+          isDisabled && "opacity-40 pointer-events-none hover:scale-100",
           className
         )}
-        disabled={isDisabled}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         {...props}
