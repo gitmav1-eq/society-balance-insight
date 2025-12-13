@@ -88,8 +88,17 @@ const NormalizationSimulator = () => {
       });
 
       if (error) throw error;
-      if (data?.result) setResult(data.result);
-      else toast.error("Simulation failed");
+      if (data?.result && typeof data.result === 'object') {
+        // Ensure all fields are strings to prevent React render errors
+        setResult({
+          individual: String(data.result.individual || data.result.impact || ""),
+          collective: String(data.result.collective || ""),
+          pressure: String(data.result.pressure || ""),
+          lever: String(data.result.lever || "")
+        });
+      } else {
+        toast.error("Simulation failed");
+      }
     } catch {
       toast.error("System error");
     } finally {
