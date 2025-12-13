@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
+import { AnimatedOption } from "@/components/ui/AnimatedOption";
 
 interface Scenario {
   question: string;
@@ -77,18 +78,14 @@ const PerspectiveShift = () => {
 
           <div className="space-y-3">
             {scenario.options.map((option, index) => (
-              <button
+              <AnimatedOption
                 key={index}
                 onClick={() => handleSelect(index)}
-                disabled={showOutcome}
-                className={`w-full text-left p-4 border transition-all duration-300 ${
-                  selectedOption === index
-                    ? "border-primary/50 bg-primary/5"
-                    : "border-border/30 hover:border-border/50 bg-background/30"
-                } ${showOutcome && selectedOption !== index ? "opacity-40" : ""}`}
+                isSelected={selectedOption === index}
+                isDisabled={showOutcome && selectedOption !== index}
               >
-                <span className="text-sm">{option.label}</span>
-              </button>
+                {option.label}
+              </AnimatedOption>
             ))}
           </div>
 
