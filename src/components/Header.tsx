@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import ThemeToggle from "./ThemeToggle";
 import { Menu, X } from "lucide-react";
 
@@ -19,9 +18,9 @@ const Header = () => {
 
   const navItems = [
     { label: "Simulate", href: "#simulator" },
-    { label: "Learn", href: "#impact" },
+    { label: "Learn", href: "#learn" },
     { label: "Play", href: "#play" },
-    { label: "Why It Matters", href: "#explore" },
+    { label: "About", href: "#about" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -46,8 +45,8 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-mono text-sm tracking-widest font-bold">
-            SOCIETY.EXE
+          <Link to="/" className="font-mono text-lg tracking-widest font-bold text-primary">
+            ORBIT
           </Link>
 
           {/* Desktop Nav */}
@@ -63,24 +62,20 @@ const Header = () => {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center">
             <ThemeToggle />
-            <Button
-              onClick={() => scrollToSection("#simulator")}
-              size="sm"
-              className="px-4"
-            >
-              Run Simulation
-            </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              className="p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -96,16 +91,6 @@ const Header = () => {
                   {item.label}
                 </button>
               ))}
-              <div className="flex items-center gap-4 pt-4 border-t border-border">
-                <ThemeToggle />
-                <Button
-                  onClick={() => scrollToSection("#simulator")}
-                  size="sm"
-                  className="flex-1"
-                >
-                  Run Simulation
-                </Button>
-              </div>
             </div>
           </nav>
         )}
