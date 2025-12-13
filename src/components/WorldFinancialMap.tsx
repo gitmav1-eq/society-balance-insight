@@ -6,33 +6,33 @@ interface Region {
   name: string;
   x: number;
   y: number;
-  healthScore: number; // 0-100
+  healthScore: number;
   population: string;
   trend: "up" | "down" | "stable";
 }
 
 const regions: Region[] = [
-  { id: "na", name: "North America", x: 22, y: 35, healthScore: 62, population: "380M", trend: "down" },
-  { id: "sa", name: "South America", x: 30, y: 65, healthScore: 45, population: "430M", trend: "stable" },
-  { id: "eu", name: "Europe", x: 52, y: 32, healthScore: 58, population: "750M", trend: "down" },
-  { id: "af", name: "Africa", x: 52, y: 55, healthScore: 38, population: "1.4B", trend: "up" },
-  { id: "me", name: "Middle East", x: 60, y: 42, healthScore: 55, population: "400M", trend: "stable" },
-  { id: "sa2", name: "South Asia", x: 72, y: 48, healthScore: 42, population: "2B", trend: "up" },
-  { id: "ea", name: "East Asia", x: 82, y: 38, healthScore: 68, population: "1.7B", trend: "stable" },
-  { id: "sea", name: "Southeast Asia", x: 80, y: 55, healthScore: 52, population: "700M", trend: "up" },
-  { id: "oc", name: "Oceania", x: 88, y: 72, healthScore: 65, population: "45M", trend: "down" },
+  { id: "na", name: "North America", x: 22, y: 32, healthScore: 62, population: "380M", trend: "down" },
+  { id: "sa", name: "South America", x: 30, y: 62, healthScore: 45, population: "430M", trend: "stable" },
+  { id: "eu", name: "Europe", x: 52, y: 28, healthScore: 58, population: "750M", trend: "down" },
+  { id: "af", name: "Africa", x: 52, y: 52, healthScore: 38, population: "1.4B", trend: "up" },
+  { id: "me", name: "Middle East", x: 62, y: 40, healthScore: 55, population: "400M", trend: "stable" },
+  { id: "sa2", name: "South Asia", x: 72, y: 45, healthScore: 42, population: "2B", trend: "up" },
+  { id: "ea", name: "East Asia", x: 80, y: 32, healthScore: 68, population: "1.7B", trend: "stable" },
+  { id: "sea", name: "Southeast Asia", x: 78, y: 52, healthScore: 52, population: "700M", trend: "up" },
+  { id: "oc", name: "Oceania", x: 85, y: 68, healthScore: 65, population: "45M", trend: "down" },
 ];
 
 const getHealthColor = (score: number) => {
-  if (score >= 60) return "hsl(var(--primary))";
-  if (score >= 45) return "hsl(42, 60%, 50%)"; // amber
-  return "hsl(0, 60%, 50%)"; // red
+  if (score >= 60) return "rgb(34, 197, 94)"; // green
+  if (score >= 45) return "rgb(234, 179, 8)"; // amber
+  return "rgb(239, 68, 68)"; // red
 };
 
-const getHealthGlow = (score: number) => {
-  if (score >= 60) return "hsl(var(--primary) / 0.6)";
-  if (score >= 45) return "hsl(42, 60%, 50% / 0.6)";
-  return "hsl(0, 60%, 50% / 0.6)";
+const getHealthGlow = (score: number, opacity: number) => {
+  if (score >= 60) return `rgba(34, 197, 94, ${opacity})`;
+  if (score >= 45) return `rgba(234, 179, 8, ${opacity})`;
+  return `rgba(239, 68, 68, ${opacity})`;
 };
 
 const WorldFinancialMap = () => {
@@ -150,9 +150,9 @@ const WorldFinancialMap = () => {
                 cy={region.y}
                 r={pulseSize * 2.5}
                 fill="none"
-                stroke={getHealthGlow(region.healthScore)}
+                stroke={getHealthGlow(region.healthScore, glowOpacity * 0.5)}
                 strokeWidth="0.3"
-                opacity={glowOpacity * 0.5}
+                opacity={1}
               />
               {/* Middle pulse ring */}
               <circle
@@ -229,16 +229,16 @@ const WorldFinancialMap = () => {
 
       {/* Legend */}
       <div className="absolute bottom-2 left-2 flex items-center gap-4 text-[9px] text-muted-foreground/60">
-        <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-primary" />
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full" style={{ background: "rgb(34, 197, 94)" }} />
           <span>Healthy (60+)</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full" style={{ background: "hsl(42, 60%, 50%)" }} />
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full" style={{ background: "rgb(234, 179, 8)" }} />
           <span>Stressed (45-60)</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full" style={{ background: "hsl(0, 60%, 50%)" }} />
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full" style={{ background: "rgb(239, 68, 68)" }} />
           <span>Critical (&lt;45)</span>
         </div>
       </div>
