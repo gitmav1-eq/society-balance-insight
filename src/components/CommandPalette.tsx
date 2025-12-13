@@ -21,6 +21,7 @@ import {
   Keyboard,
   ExternalLink,
   Search,
+  Focus,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAmbientSound } from "@/hooks/useAmbientSound";

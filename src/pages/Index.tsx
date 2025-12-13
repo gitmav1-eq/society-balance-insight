@@ -8,12 +8,14 @@ import DynamicFooter from "@/components/DynamicFooter";
 import ArchivistChat from "@/components/ArchivistChat";
 import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
 import CommandPalette from "@/components/CommandPalette";
+import LiveSocietyPulse from "@/components/LiveSocietyPulse";
 import { useKeyboardShortcuts, scrollToSection, ShortcutAction } from "@/hooks/useKeyboardShortcuts";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 
 const Index = () => {
   const simulatorRef = useRef<HTMLDivElement>(null);
   const [isArchivistOpen, setIsArchivistOpen] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const { toggle: toggleSound, playTap } = useAmbientSound();
 
   const scrollToSimulator = () => {
@@ -102,6 +104,14 @@ const Index = () => {
         setIsArchivistOpen(false);
       },
     },
+    {
+      key: "f",
+      description: "Toggle focus mode",
+      action: () => {
+        setFocusMode((prev) => !prev);
+        playTap();
+      },
+    },
   ], [playTap, toggleSound, toggleTheme]);
 
   const { showHelp, setShowHelp } = useKeyboardShortcuts(shortcuts);
@@ -129,6 +139,7 @@ const Index = () => {
         onOpenArchivist={() => setIsArchivistOpen(true)} 
         onShowShortcuts={() => setShowHelp(true)} 
       />
+      <LiveSocietyPulse focusMode={focusMode} />
     </div>
   );
 };
