@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CosmicParticles from "@/components/ui/CosmicParticles";
@@ -10,8 +10,17 @@ interface BalanceMetric {
   label: string;
   positive: string;
   negative: string;
-  ratio: number; // 0-1, where 0.5 is balanced
+  ratio: number;
   trend: "improving" | "declining" | "stable";
+}
+
+interface GlobalStat {
+  label: string;
+  value: number;
+  suffix: string;
+  prefix?: string;
+  incrementRate: number;
+  decimals?: number;
 }
 
 const metrics: BalanceMetric[] = [
@@ -45,9 +54,58 @@ const metrics: BalanceMetric[] = [
   },
 ];
 
+const globalStats: GlobalStat[] = [
+  { label: "Global Consumer Debt", value: 58.3, suffix: "T", prefix: "$", incrementRate: 0.0001 },
+  { label: "Avg Savings Rate", value: 7.2, suffix: "%", incrementRate: -0.00001, decimals: 1 },
+  { label: "Households in Debt Stress", value: 142, suffix: "M", incrementRate: 0.002 },
+  { label: "Years to Retirement Gap", value: 8.4, suffix: " yrs", incrementRate: 0.00002, decimals: 1 },
+];
+
+// Animated counter hook
+const useAnimatedCounter = (targetValue: number, incrementRate: number, decimals = 0) => {
+  const [value, setValue] = useState(targetValue);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setValue(prev => {
+        const newValue = prev + incrementRate + (Math.random() - 0.5) * Math.abs(incrementRate) * 0.5;
+        return Number(newValue.toFixed(decimals + 2));
+      });
+    }, 100);
+    
+    return () => clearInterval(interval);
+  }, [incrementRate, decimals]);
+  
+  return value.toFixed(decimals);
+};
+
+// Counter component
+const AnimatedStatCounter = ({ stat }: { stat: GlobalStat }) => {
+  const displayValue = useAnimatedCounter(stat.value, stat.incrementRate, stat.decimals || 0);
+  
+  return (
+    <div className="text-center p-4 border border-border/20 bg-card/5 backdrop-blur-sm rounded-sm group hover:border-primary/30 transition-all duration-300">
+      <div className="font-mono text-2xl md:text-3xl font-bold text-foreground mb-1 tabular-nums">
+        <span className="text-primary/70">{stat.prefix}</span>
+        <span className="animate-pulse-glow inline-block">{displayValue}</span>
+        <span className="text-muted-foreground text-lg">{stat.suffix}</span>
+      </div>
+      <p className="text-[10px] font-mono tracking-wider text-muted-foreground/60 uppercase">
+        {stat.label}
+      </p>
+      {/* Live indicator */}
+      <div className="flex items-center justify-center gap-1 mt-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="text-[8px] text-muted-foreground/40 font-mono">LIVE</span>
+      </div>
+    </div>
+  );
+};
+
 const PublicBalanceSheet = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [visibleMetrics, setVisibleMetrics] = useState<number[]>([]);
+  const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -65,6 +123,13 @@ const PublicBalanceSheet = () => {
           },
         }
       );
+
+      // Show stats when scrolled into view
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 75%",
+        onEnter: () => setShowStats(true),
+      });
 
       // Animate metrics appearing one by one
       metrics.forEach((_, index) => {
@@ -126,6 +191,15 @@ const PublicBalanceSheet = () => {
             A real-time mirror of our collective financial choices. Not judgment—just visibility.
           </p>
         </div>
+
+        {/* Live Global Stats */}
+        {showStats && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-16 animate-fade-in">
+            {globalStats.map((stat) => (
+              <AnimatedStatCounter key={stat.label} stat={stat} />
+            ))}
+          </div>
+        )}
 
         {/* Balance Visualization */}
         <div className="space-y-8">
