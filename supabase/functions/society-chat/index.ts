@@ -23,6 +23,30 @@ Your tone:
 Keep responses SHORT (2-3 paragraphs maximum). Be profound, not verbose.
 Never use emojis or casual language. This is a public intelligence system.`;
 
+const MAX_INPUT_LENGTH = 1000;
+
+function sanitizeInput(input: string): string {
+  return input
+    .trim()
+    .slice(0, MAX_INPUT_LENGTH)
+    .replace(/[<>]/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+}
+
+function validateInput(input: unknown): { valid: boolean; error?: string; sanitized?: string } {
+  if (!input || typeof input !== 'string') {
+    return { valid: false, error: "Question is required" };
+  }
+  
+  const sanitized = sanitizeInput(input);
+  
+  if (sanitized.length < 2) {
+    return { valid: false, error: "Question too short" };
+  }
+  
+  return { valid: true, sanitized };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,12 +55,15 @@ serve(async (req) => {
   try {
     const { question, history } = await req.json();
 
-    if (!question) {
+    const validation = validateInput(question);
+    if (!validation.valid) {
       return new Response(
-        JSON.stringify({ error: "Question is required" }),
+        JSON.stringify({ error: validation.error }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    
+    const sanitizedQuestion = validation.sanitized!;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -47,17 +74,19 @@ serve(async (req) => {
       );
     }
 
-    // Build conversation history
+    // Sanitize history as well
+    const sanitizedHistory = (history || []).slice(-6).map((msg: { role: string; content: string }) => ({
+      role: msg.role === "system" ? "assistant" : msg.role,
+      content: sanitizeInput(String(msg.content || "")),
+    }));
+
     const messages = [
       { role: "system", content: systemPrompt },
-      ...(history || []).slice(-6).map((msg: { role: string; content: string }) => ({
-        role: msg.role === "system" ? "assistant" : msg.role,
-        content: msg.content,
-      })),
-      { role: "user", content: question },
+      ...sanitizedHistory,
+      { role: "user", content: sanitizedQuestion },
     ];
 
-    console.log("Society chat processing:", question.substring(0, 50));
+    console.log("Society chat processing:", sanitizedQuestion.substring(0, 50));
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
