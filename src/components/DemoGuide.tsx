@@ -45,10 +45,9 @@ const features: Feature[] = [
 
 interface DemoGuideProps {
   className?: string;
-  onRestartTour?: () => void;
 }
 
-const DemoGuide = ({ className, onRestartTour }: DemoGuideProps) => {
+const DemoGuide = ({ className }: DemoGuideProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
   const [hasSeenDemo, setHasSeenDemo] = useState(() => {
@@ -197,19 +196,6 @@ const DemoGuide = ({ className, onRestartTour }: DemoGuideProps) => {
               </Button>
             </div>
           </div>
-
-          {/* Restart Tour Button */}
-          {onRestartTour && (
-            <button
-              onClick={() => {
-                handleClose();
-                onRestartTour();
-              }}
-              className="w-full mt-4 py-2 text-xs text-primary/70 hover:text-primary border border-primary/20 hover:border-primary/40 rounded transition-colors"
-            >
-              🎯 Take the Interactive Tour
-            </button>
-          )}
 
           {/* Keyboard hint */}
           <p className="text-center text-[10px] text-muted-foreground/50 mt-4">
