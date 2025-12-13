@@ -1,33 +1,36 @@
 import { useRef, useMemo, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const mouseState = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
 function ParallaxCamera() {
   const { camera } = useThree();
-  const scrollProgress = useRef({ value: 0 });
+  const scrollProgress = useRef(0);
+  const ticking = useRef(false);
 
   useEffect(() => {
-    const trigger = ScrollTrigger.create({
-      trigger: document.body,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 1,
-      onUpdate: (self) => {
-        scrollProgress.current.value = self.progress;
-      },
-    });
+    const updateScrollProgress = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      scrollProgress.current = docHeight > 0 ? window.scrollY / docHeight : 0;
+      ticking.current = false;
+    };
 
-    return () => trigger.kill();
+    const handleScroll = () => {
+      if (!ticking.current) {
+        ticking.current = true;
+        requestAnimationFrame(updateScrollProgress);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    updateScrollProgress();
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useFrame(() => {
-    const progress = scrollProgress.current.value;
+    const progress = scrollProgress.current;
     camera.position.z = 8 + progress * 2;
     camera.position.y = progress * 1.5 - 0.5;
     camera.position.x = Math.sin(progress * Math.PI) * 1;
