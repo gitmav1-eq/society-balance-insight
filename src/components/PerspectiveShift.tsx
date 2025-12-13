@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAmbientSound } from "@/hooks/useAmbientSound";
 
 interface Scenario {
   question: string;
@@ -37,18 +38,21 @@ const PerspectiveShift = () => {
   const [currentScenario, setCurrentScenario] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showOutcome, setShowOutcome] = useState(false);
+  const { playTap, playReveal } = useAmbientSound();
 
   const scenario = scenarios[currentScenario];
 
   const handleSelect = (index: number) => {
     setSelectedOption(index);
     setShowOutcome(true);
+    playReveal();
   };
 
   const handleNext = () => {
     setSelectedOption(null);
     setShowOutcome(false);
     setCurrentScenario((prev) => (prev + 1) % scenarios.length);
+    playTap();
   };
 
   return (
