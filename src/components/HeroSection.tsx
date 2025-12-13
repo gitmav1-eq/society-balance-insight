@@ -50,24 +50,24 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/5 via-background/30 to-background" />
 
       <div ref={contentRef} className="relative z-10 max-w-3xl mx-auto px-6 text-center">
-        <p className="hero-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/60 mb-8">
-          PUBLIC UNDERSTANDING ENGINE
+        <p className="hero-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/40 mb-8">
+          EXPLORING THE FINANCIAL UNIVERSE
         </p>
         
         <h1 className="hero-animate text-3xl md:text-4xl lg:text-5xl leading-[1.2] mb-6 font-bold">
-          Small actions.
+          Small choices.
           <br />
-          <span className="text-primary">Planetary consequences.</span>
+          <span className="text-primary/90">Collective trajectories.</span>
         </h1>
         
-        <p className="hero-animate text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
-          Explore how everyday behaviors shape society over decades.
-          No jargon. No dashboards. Just understanding.
+        <p className="hero-animate text-base md:text-lg text-muted-foreground/80 max-w-lg mx-auto mb-10 leading-relaxed">
+          Understand how everyday behaviors shape society over decades.
+          No jargon. Just clarity.
         </p>
         
         <div className="hero-animate">
-          <Button onClick={onSimulateClick} size="lg" className="px-8 py-6 text-base font-medium">
-            Begin Exploring
+          <Button onClick={onSimulateClick} size="lg" className="px-8 py-6 text-sm font-medium">
+            Enter the Universe
           </Button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import Header from "@/components/Header";
-import MultiLayerFooter from "@/components/MultiLayerFooter";
+import DynamicHeader from "@/components/DynamicHeader";
+import DynamicFooter from "@/components/DynamicFooter";
 
 const simulations = [
   {
@@ -48,7 +48,7 @@ const simulations = [
 const SimulationLibrary = () => {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Header />
+      <DynamicHeader mode="landing" />
 
       <main className="pt-24 pb-16 px-6 md:px-12 lg:px-24">
         <div className="max-w-5xl mx-auto">
@@ -139,7 +139,7 @@ const SimulationLibrary = () => {
         </div>
       </main>
 
-      <MultiLayerFooter />
+      <DynamicFooter mode="educational" />
     </div>
   );
 };
