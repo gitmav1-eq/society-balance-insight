@@ -19,6 +19,7 @@ const Index = () => {
   const simulatorRef = useRef<HTMLDivElement>(null);
   const [isArchivistOpen, setIsArchivistOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const { toggle: toggleSound, playTap } = useAmbientSound();
 
   const scrollToSimulator = () => {
@@ -145,8 +146,8 @@ const Index = () => {
         onShowShortcuts={() => setShowHelp(true)} 
       />
       <LiveSocietyPulse focusMode={focusMode} />
-      <DemoGuide />
-      <GuidedTour />
+      <DemoGuide onRestartTour={() => setShowTour(true)} />
+      <GuidedTour forceStart={showTour} onTourEnd={() => setShowTour(false)} />
     </div>
   );
 };
