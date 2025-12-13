@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 import { AnimatedOption } from "@/components/ui/AnimatedOption";
+import CosmicParticles from "@/components/ui/CosmicParticles";
 
 interface Scenario {
   question: string;
@@ -57,8 +58,11 @@ const PerspectiveShift = () => {
   };
 
   return (
-    <section id="why" className="py-24 px-6">
-      <div className="max-w-2xl mx-auto">
+    <section id="why" className="py-24 px-6 relative overflow-hidden">
+      {/* Cosmic particle background */}
+      <CosmicParticles particleCount={30} showShootingStars intensity="low" />
+      
+      <div className="max-w-2xl mx-auto relative z-10">
         <div className="text-center mb-12">
           <p className="font-mono text-[9px] tracking-[0.5em] text-muted-foreground/50 mb-4">
             PERSPECTIVE SHIFT

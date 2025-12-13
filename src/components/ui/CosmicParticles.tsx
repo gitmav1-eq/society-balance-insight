@@ -11,11 +11,35 @@ interface Particle {
   twinkleOffset: number;
 }
 
-const CosmicParticles = () => {
+interface ShootingStar {
+  x: number;
+  y: number;
+  length: number;
+  speed: number;
+  opacity: number;
+  angle: number;
+  active: boolean;
+  trail: Array<{ x: number; y: number; opacity: number }>;
+}
+
+interface CosmicParticlesProps {
+  particleCount?: number;
+  showShootingStars?: boolean;
+  intensity?: "low" | "medium" | "high";
+}
+
+const CosmicParticles = ({ 
+  particleCount = 40, 
+  showShootingStars = false,
+  intensity = "low" 
+}: CosmicParticlesProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
+  const shootingStarsRef = useRef<ShootingStar[]>([]);
   const animationRef = useRef<number>();
   const mouseRef = useRef({ x: 0, y: 0 });
+
+  const opacityMultiplier = intensity === "low" ? 0.4 : intensity === "medium" ? 0.6 : 0.8;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,17 +60,30 @@ const CosmicParticles = () => {
     window.addEventListener("resize", resizeCanvas);
 
     // Initialize particles
-    const particleCount = 60;
     particlesRef.current = Array.from({ length: particleCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 0.5,
-      speedX: (Math.random() - 0.5) * 0.3,
-      speedY: (Math.random() - 0.5) * 0.3,
-      opacity: Math.random() * 0.5 + 0.2,
-      twinkleSpeed: Math.random() * 0.02 + 0.01,
+      size: Math.random() * 1.5 + 0.3,
+      speedX: (Math.random() - 0.5) * 0.2,
+      speedY: (Math.random() - 0.5) * 0.2,
+      opacity: Math.random() * 0.4 + 0.1,
+      twinkleSpeed: Math.random() * 0.015 + 0.005,
       twinkleOffset: Math.random() * Math.PI * 2,
     }));
+
+    // Initialize shooting stars pool
+    if (showShootingStars) {
+      shootingStarsRef.current = Array.from({ length: 3 }, () => ({
+        x: 0,
+        y: 0,
+        length: 0,
+        speed: 0,
+        opacity: 0,
+        angle: 0,
+        active: false,
+        trail: [],
+      }));
+    }
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -59,6 +96,21 @@ const CosmicParticles = () => {
     canvas.addEventListener("mousemove", handleMouseMove);
 
     let time = 0;
+    let lastShootingStarTime = 0;
+
+    const spawnShootingStar = () => {
+      const inactiveStar = shootingStarsRef.current.find(s => !s.active);
+      if (!inactiveStar) return;
+
+      inactiveStar.x = Math.random() * canvas.width * 0.8;
+      inactiveStar.y = Math.random() * canvas.height * 0.3;
+      inactiveStar.length = Math.random() * 60 + 40;
+      inactiveStar.speed = Math.random() * 4 + 3;
+      inactiveStar.opacity = Math.random() * 0.4 + 0.2;
+      inactiveStar.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+      inactiveStar.active = true;
+      inactiveStar.trail = [];
+    };
 
     const animate = () => {
       if (!ctx || !canvas) return;
@@ -70,17 +122,66 @@ const CosmicParticles = () => {
       const computedStyle = getComputedStyle(document.documentElement);
       const primaryHsl = computedStyle.getPropertyValue("--primary").trim();
 
+      // Spawn shooting stars occasionally (every 8-15 seconds)
+      if (showShootingStars && time - lastShootingStarTime > 8 + Math.random() * 7) {
+        spawnShootingStar();
+        lastShootingStarTime = time;
+      }
+
+      // Draw and update shooting stars
+      shootingStarsRef.current.forEach((star) => {
+        if (!star.active) return;
+
+        // Update position
+        star.x += Math.cos(star.angle) * star.speed;
+        star.y += Math.sin(star.angle) * star.speed;
+
+        // Add to trail
+        star.trail.unshift({ x: star.x, y: star.y, opacity: star.opacity });
+        if (star.trail.length > 20) star.trail.pop();
+
+        // Draw trail
+        star.trail.forEach((point, i) => {
+          const trailOpacity = point.opacity * (1 - i / star.trail.length) * opacityMultiplier;
+          const trailSize = (1 - i / star.trail.length) * 2;
+          
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${primaryHsl}, ${trailOpacity})`;
+          ctx.fill();
+        });
+
+        // Draw head glow
+        const headGradient = ctx.createRadialGradient(
+          star.x, star.y, 0,
+          star.x, star.y, 8
+        );
+        headGradient.addColorStop(0, `hsla(${primaryHsl}, ${star.opacity * opacityMultiplier})`);
+        headGradient.addColorStop(1, `hsla(${primaryHsl}, 0)`);
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = headGradient;
+        ctx.fill();
+
+        // Deactivate if out of bounds
+        if (star.x > canvas.width + 50 || star.y > canvas.height + 50) {
+          star.active = false;
+          star.trail = [];
+        }
+      });
+
+      // Draw particles
       particlesRef.current.forEach((particle) => {
         // Update position
         particle.x += particle.speedX;
         particle.y += particle.speedY;
 
-        // Mouse attraction (subtle)
+        // Subtle mouse attraction
         const dx = mouseRef.current.x - particle.x;
         const dy = mouseRef.current.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 150 && distance > 0) {
-          const force = (150 - distance) / 150 * 0.02;
+        if (distance < 120 && distance > 0) {
+          const force = (120 - distance) / 120 * 0.01;
           particle.x += dx * force;
           particle.y += dy * force;
         }
@@ -93,40 +194,38 @@ const CosmicParticles = () => {
 
         // Twinkle effect
         const twinkle = Math.sin(time * particle.twinkleSpeed * 60 + particle.twinkleOffset);
-        const currentOpacity = particle.opacity * (0.5 + twinkle * 0.5);
+        const currentOpacity = particle.opacity * (0.5 + twinkle * 0.5) * opacityMultiplier;
 
-        // Draw particle with glow
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        
-        // Glow effect
+        // Draw particle with subtle glow
         const gradient = ctx.createRadialGradient(
           particle.x, particle.y, 0,
-          particle.x, particle.y, particle.size * 3
+          particle.x, particle.y, particle.size * 2.5
         );
         gradient.addColorStop(0, `hsla(${primaryHsl}, ${currentOpacity})`);
-        gradient.addColorStop(0.5, `hsla(${primaryHsl}, ${currentOpacity * 0.3})`);
+        gradient.addColorStop(0.5, `hsla(${primaryHsl}, ${currentOpacity * 0.2})`);
         gradient.addColorStop(1, `hsla(${primaryHsl}, 0)`);
         
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size * 2.5, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
 
-        // Core of particle
+        // Core
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * 0.5, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${primaryHsl}, ${currentOpacity + 0.2})`;
+        ctx.arc(particle.x, particle.y, particle.size * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${primaryHsl}, ${currentOpacity + 0.1})`;
         ctx.fill();
       });
 
-      // Draw connecting lines between nearby particles
+      // Draw subtle connecting lines
       particlesRef.current.forEach((p1, i) => {
         particlesRef.current.slice(i + 1).forEach((p2) => {
           const dx = p1.x - p2.x;
           const dy = p1.y - p2.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 100) {
-            const opacity = (1 - distance / 100) * 0.15;
+          if (distance < 80) {
+            const opacity = (1 - distance / 80) * 0.08 * opacityMultiplier;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -149,13 +248,13 @@ const CosmicParticles = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
+  }, [particleCount, showShootingStars, opacityMultiplier]);
 
   return (
     <canvas
       ref={canvasRef}
       className="absolute inset-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.5 }}
     />
   );
 };
