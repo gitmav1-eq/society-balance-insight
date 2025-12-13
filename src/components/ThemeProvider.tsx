@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-type Theme = "light" | "dark" | "cyber";
+type Theme = "light" | "dark" | "ambient";
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,15 +12,17 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("society-theme") as Theme;
-      if (stored) return stored;
+      const stored = localStorage.getItem("society-theme");
+      // Migrate old cyber theme to ambient
+      if (stored === "cyber") return "ambient";
+      if (stored === "light" || stored === "dark" || stored === "ambient") return stored;
     }
     return "dark";
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove("light", "dark", "cyber");
+    root.classList.remove("light", "dark", "ambient", "cyber");
     root.classList.add(theme);
     localStorage.setItem("society-theme", theme);
   }, [theme]);
