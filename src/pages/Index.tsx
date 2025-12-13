@@ -1,47 +1,38 @@
-import { useRef, useState } from "react";
-import Hero from "@/components/Hero";
+import { useRef } from "react";
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
 import NormalizationSimulator from "@/components/NormalizationSimulator";
-import SocietalBalanceSheet from "@/components/SocietalBalanceSheet";
-import WhyThisMatters from "@/components/WhyThisMatters";
-import InsightForm from "@/components/InsightForm";
-import ClosingStatement from "@/components/ClosingStatement";
-import Footer from "@/components/Footer";
-import AIGuide from "@/components/AIGuide";
+import ImpactVisualization from "@/components/ImpactVisualization";
+import AskSocietyChatbot from "@/components/AskSocietyChatbot";
+import SocialReflection from "@/components/SocialReflection";
+import MultiFooter from "@/components/MultiFooter";
 
 const Index = () => {
   const simulatorRef = useRef<HTMLDivElement>(null);
-  const whyRef = useRef<HTMLDivElement>(null);
-  const [simulationContext, setSimulationContext] = useState<string>("");
 
   const scrollToSimulator = () => {
     simulatorRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const scrollToWhy = () => {
-    whyRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Hero onSimulateClick={scrollToSimulator} onWhyClick={scrollToWhy} />
+      <Header />
       
-      <div ref={simulatorRef}>
-        <NormalizationSimulator onSimulationComplete={setSimulationContext} />
-      </div>
+      <main>
+        <HeroSection onSimulateClick={scrollToSimulator} />
+        
+        <div ref={simulatorRef}>
+          <NormalizationSimulator />
+        </div>
+        
+        <ImpactVisualization />
+        
+        <AskSocietyChatbot />
+        
+        <SocialReflection />
+      </main>
       
-      <div ref={whyRef}>
-        <WhyThisMatters />
-      </div>
-      
-      <SocietalBalanceSheet />
-      
-      <InsightForm />
-      
-      <ClosingStatement />
-      
-      <Footer />
-
-      <AIGuide context={simulationContext} />
+      <MultiFooter />
     </div>
   );
 };

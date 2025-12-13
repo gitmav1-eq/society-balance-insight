@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-type Theme = "light" | "dark" | "future";
+type Theme = "light" | "dark" | "cyber";
 
 interface ThemeContextType {
   theme: Theme;
@@ -20,7 +20,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove("light", "dark", "future");
+    root.classList.remove("light", "dark", "cyber");
     root.classList.add(theme);
     localStorage.setItem("society-theme", theme);
   }, [theme]);

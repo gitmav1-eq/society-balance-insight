@@ -1,4 +1,4 @@
-import { Sun, Moon, Sparkles } from "lucide-react";
+import { Sun, Moon, Zap } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "@/components/ui/button";
 
@@ -8,7 +8,7 @@ const ThemeToggle = () => {
   const themes = [
     { value: "light" as const, icon: Sun, label: "Light" },
     { value: "dark" as const, icon: Moon, label: "Dark" },
-    { value: "future" as const, icon: Sparkles, label: "Future" },
+    { value: "cyber" as const, icon: Zap, label: "Cyber" },
   ];
 
   return (
@@ -19,10 +19,10 @@ const ThemeToggle = () => {
           variant={theme === value ? "default" : "ghost"}
           size="sm"
           onClick={() => setTheme(value)}
-          className="px-3 py-1 h-8"
+          className="px-2 py-1 h-7"
           title={label}
         >
-          <Icon className="h-4 w-4" />
+          <Icon className="h-3.5 w-3.5" />
           <span className="sr-only">{label}</span>
         </Button>
       ))}
