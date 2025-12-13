@@ -50,26 +50,17 @@ const GuidedTour = ({ forceStart, onTourEnd }: GuidedTourProps) => {
   const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({});
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Auto-start tour once for first-time visitors
-  useEffect(() => {
-    const hasSeenTour = localStorage.getItem("society-exe-tour-completed");
-    if (!hasSeenTour && !forceStart) {
-      const timer = setTimeout(() => {
-        setCurrentStep(0);
-        setIsActive(true);
-        setShowConfetti(false);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [forceStart]);
-
-  // Start tour when explicitly forced from outside (e.g. DemoGuide button)
+  // Start or stop tour based on external trigger only
   useEffect(() => {
     if (forceStart) {
       setCurrentStep(0);
       setIsActive(true);
       setShowConfetti(false);
+      return;
     }
+
+    // When forceStart is false, keep tour inactive
+    setIsActive(false);
   }, [forceStart]);
 
   // Position tooltip relative to target element
