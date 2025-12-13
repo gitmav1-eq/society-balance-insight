@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import SimulatorSkeleton from "@/components/ui/SimulatorSkeleton";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
+import { StarryButton } from "@/components/ui/StarryButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -209,14 +210,14 @@ const NormalizationSimulator = () => {
             
             <div className="flex flex-wrap gap-3 mb-8">
               {presetBehaviors.map((preset, index) => (
-                <button
+                <StarryButton
                   key={index}
                   onClick={() => handleSimulate(preset, true)}
                   disabled={isLoading}
-                  className="px-4 py-2.5 text-sm border border-border/50 bg-background/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all disabled:opacity-50 rounded-sm"
+                  variant="outline"
                 >
                   {preset}
-                </button>
+                </StarryButton>
               ))}
             </div>
 
@@ -267,9 +268,9 @@ const NormalizationSimulator = () => {
                   <span className="text-[11px] text-destructive">{validationError}</span>
                 )}
               </div>
-              <Button onClick={() => handleSimulate(customInput)} disabled={isLoading || !customInput.trim()} className="w-full md:w-auto px-8">
-                Explore
-              </Button>
+              <StarryButton onClick={() => handleSimulate(customInput)} disabled={isLoading || !customInput.trim()} className="w-full md:w-auto px-8">
+                ✨ Explore
+              </StarryButton>
             </div>
           </div>
         ) : isLoading ? (
