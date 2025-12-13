@@ -85,19 +85,27 @@ const AnimatedStatCounter = ({ stat }: { stat: GlobalStat }) => {
   const displayValue = useAnimatedCounter(stat.value, stat.incrementRate, stat.decimals || 0);
   
   return (
-    <div className="text-center p-4 border border-border/20 bg-card/5 backdrop-blur-sm rounded-sm group hover:border-primary/30 transition-all duration-300">
-      <div className="font-mono text-2xl md:text-3xl font-bold text-foreground mb-1 tabular-nums">
-        <span className="text-primary/70">{stat.prefix}</span>
-        <span className="animate-pulse-glow inline-block">{displayValue}</span>
-        <span className="text-muted-foreground text-lg">{stat.suffix}</span>
-      </div>
-      <p className="text-[10px] font-mono tracking-wider text-muted-foreground/60 uppercase">
-        {stat.label}
-      </p>
-      {/* Live indicator */}
-      <div className="flex items-center justify-center gap-1 mt-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span className="text-[8px] text-muted-foreground/40 font-mono">LIVE</span>
+    <div className="relative text-center p-5 border border-border/30 bg-gradient-to-b from-card/10 to-transparent backdrop-blur-sm rounded-sm group hover:border-primary/40 transition-all duration-300 overflow-hidden">
+      {/* Subtle background glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      <div className="relative z-10">
+        <div className="font-mono text-2xl md:text-3xl font-bold mb-2 tabular-nums tracking-tight">
+          <span className="text-primary">{stat.prefix}</span>
+          <span className="text-foreground">{displayValue}</span>
+          <span className="text-muted-foreground/70 text-base ml-0.5">{stat.suffix}</span>
+        </div>
+        <p className="text-[10px] font-mono tracking-widest text-muted-foreground/50 uppercase">
+          {stat.label}
+        </p>
+        {/* Live indicator */}
+        <div className="flex items-center justify-center gap-1.5 mt-3">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="text-[9px] text-emerald-500/70 font-mono tracking-wider">LIVE</span>
+        </div>
       </div>
     </div>
   );
