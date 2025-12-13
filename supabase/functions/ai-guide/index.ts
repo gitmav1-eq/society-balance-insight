@@ -29,6 +29,30 @@ const fallbacks: Record<string, string> = {
   "why think long-term?": "Short-term thinking feels easier, but consequences compound. What's comfortable today can become tomorrow's pressure.",
 };
 
+const MAX_INPUT_LENGTH = 500;
+
+function sanitizeInput(input: string): string {
+  return input
+    .trim()
+    .slice(0, MAX_INPUT_LENGTH)
+    .replace(/[<>]/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+}
+
+function validateInput(input: unknown): { valid: boolean; error?: string; sanitized?: string } {
+  if (!input || typeof input !== 'string') {
+    return { valid: false, error: "Question is required" };
+  }
+  
+  const sanitized = sanitizeInput(input);
+  
+  if (sanitized.length < 2) {
+    return { valid: false, error: "Question too short" };
+  }
+  
+  return { valid: true, sanitized };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -38,17 +62,20 @@ serve(async (req) => {
     const body = await req.json();
     const question = body.question || body.context;
 
-    if (!question) {
-      return new Response(JSON.stringify({ error: "Question is required" }), {
+    const validation = validateInput(question);
+    if (!validation.valid) {
+      return new Response(JSON.stringify({ error: validation.error }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    
+    const sanitizedQuestion = validation.sanitized!;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     // Check fallbacks first
-    const lowerQ = question.toLowerCase().trim();
+    const lowerQ = sanitizedQuestion.toLowerCase();
     if (fallbacks[lowerQ]) {
       return new Response(JSON.stringify({ answer: fallbacks[lowerQ], explanation: fallbacks[lowerQ] }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -72,7 +99,7 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: question },
+          { role: "user", content: sanitizedQuestion },
         ],
         max_tokens: 150,
       }),

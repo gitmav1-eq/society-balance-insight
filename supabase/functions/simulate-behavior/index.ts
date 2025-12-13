@@ -43,6 +43,30 @@ Be specific and pragmatic.
 
 Remember: No fear language. No blame. No personal advice. Only clarity about collective consequences.`;
 
+const MAX_INPUT_LENGTH = 500;
+
+function sanitizeInput(input: string): string {
+  return input
+    .trim()
+    .slice(0, MAX_INPUT_LENGTH)
+    .replace(/[<>]/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
+}
+
+function validateInput(input: unknown): { valid: boolean; error?: string; sanitized?: string } {
+  if (!input || typeof input !== 'string') {
+    return { valid: false, error: "Please provide a behavior to simulate" };
+  }
+  
+  const sanitized = sanitizeInput(input);
+  
+  if (sanitized.length < 3) {
+    return { valid: false, error: "Input too short" };
+  }
+  
+  return { valid: true, sanitized };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -51,12 +75,15 @@ serve(async (req) => {
   try {
     const { behavior } = await req.json();
     
-    if (!behavior || typeof behavior !== "string") {
+    const validation = validateInput(behavior);
+    if (!validation.valid) {
       return new Response(
-        JSON.stringify({ error: "Please provide a behavior to simulate" }),
+        JSON.stringify({ error: validation.error }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    
+    const sanitizedBehavior = validation.sanitized!;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -67,7 +94,7 @@ serve(async (req) => {
       );
     }
 
-    console.log("Simulating behavior:", behavior);
+    console.log("Simulating behavior:", sanitizedBehavior);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -79,7 +106,7 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Analyze this normalized societal behavior and project its long-term collective impact: "${behavior}"` }
+          { role: "user", content: `Analyze this normalized societal behavior and project its long-term collective impact: "${sanitizedBehavior}"` }
         ],
       }),
     });
