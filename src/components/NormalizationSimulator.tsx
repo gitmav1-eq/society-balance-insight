@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,9 @@ interface SimulationResult {
   pressure: string;
   lever: string;
 }
+
+// Simple in-memory cache for simulation results
+const simulationCache = new Map<string, SimulationResult>();
 
 const NormalizationSimulator = () => {
   const [behavior, setBehavior] = useState("");
@@ -72,15 +75,23 @@ const NormalizationSimulator = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleSimulate = async (behaviorToSimulate: string) => {
+  const handleSimulate = useCallback(async (behaviorToSimulate: string) => {
     if (!behaviorToSimulate.trim()) {
       toast.error("Select or enter a behavior");
       return;
     }
 
+    const cacheKey = behaviorToSimulate.toLowerCase().trim();
+    setBehavior(behaviorToSimulate);
+
+    // Check cache first
+    if (simulationCache.has(cacheKey)) {
+      setResult(simulationCache.get(cacheKey)!);
+      return;
+    }
+
     setIsLoading(true);
     setResult(null);
-    setBehavior(behaviorToSimulate);
 
     try {
       const { data, error } = await supabase.functions.invoke("simulate-behavior-v2", {
@@ -89,13 +100,15 @@ const NormalizationSimulator = () => {
 
       if (error) throw error;
       if (data?.result && typeof data.result === 'object') {
-        // Ensure all fields are strings to prevent React render errors
-        setResult({
+        const normalizedResult: SimulationResult = {
           individual: String(data.result.individual || data.result.impact || ""),
           collective: String(data.result.collective || ""),
           pressure: String(data.result.pressure || ""),
           lever: String(data.result.lever || "")
-        });
+        };
+        // Cache the result
+        simulationCache.set(cacheKey, normalizedResult);
+        setResult(normalizedResult);
       } else {
         toast.error("Simulation failed");
       }
@@ -104,12 +117,12 @@ const NormalizationSimulator = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setResult(null);
     setBehavior("");
-  };
+  }, []);
 
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6">
