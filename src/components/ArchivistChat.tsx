@@ -10,6 +10,13 @@ interface Message {
   content: string;
 }
 
+const starterQuestions = [
+  "Why does individual debt become a collective problem?",
+  "What happens when a generation delays homeownership?",
+  "How does gig work reshape social safety nets?",
+  "Why do small habits compound into systemic change?",
+];
+
 const ArchivistChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -23,10 +30,10 @@ const ArchivistChat = () => {
     }
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (questionOverride?: string) => {
+    const question = (questionOverride || input).trim();
+    if (!question || isLoading) return;
 
-    const question = input.trim();
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: question }]);
     setIsLoading(true);
@@ -98,12 +105,27 @@ const ArchivistChat = () => {
         {/* Messages */}
         <ScrollArea className="h-[calc(100%-140px)] p-4" ref={scrollRef}>
           {messages.length === 0 ? (
-            <div className="text-center text-muted-foreground/60 mt-12">
+            <div className="text-center text-muted-foreground/60 mt-8">
               <p className="font-mono text-[9px] tracking-widest mb-3">ASK THE ARCHIVIST</p>
-              <p className="text-sm leading-relaxed max-w-[280px] mx-auto">
+              <p className="text-sm leading-relaxed max-w-[280px] mx-auto mb-6">
                 I provide context and understanding about systemic patterns. Ask me why things
                 matter at scale.
               </p>
+              <div className="space-y-2 text-left">
+                <p className="font-mono text-[8px] tracking-widest text-muted-foreground/40 text-center mb-2">
+                  SUGGESTED QUESTIONS
+                </p>
+                {starterQuestions.map((question, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSend(question)}
+                    disabled={isLoading}
+                    className="w-full text-left p-3 text-sm border border-border/30 bg-card/30 hover:bg-primary/10 hover:border-primary/30 transition-colors rounded-sm disabled:opacity-50"
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -146,7 +168,7 @@ const ArchivistChat = () => {
               disabled={isLoading}
             />
             <Button
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={isLoading || !input.trim()}
               size="icon"
               className="shrink-0"
