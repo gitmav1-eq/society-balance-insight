@@ -1,4 +1,4 @@
-import { Sun, Moon, Zap } from "lucide-react";
+import { Sun, Moon, CloudMoon } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "@/components/ui/button";
 
@@ -8,7 +8,7 @@ const ThemeToggle = () => {
   const themes = [
     { value: "light" as const, icon: Sun, label: "Light" },
     { value: "dark" as const, icon: Moon, label: "Dark" },
-    { value: "cyber" as const, icon: Zap, label: "Cyber" },
+    { value: "ambient" as const, icon: CloudMoon, label: "Ambient" },
   ];
 
   return (
