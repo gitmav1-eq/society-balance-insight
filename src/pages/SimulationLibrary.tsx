@@ -139,7 +139,7 @@ const SimulationLibrary = () => {
         </div>
       </main>
 
-      <DynamicFooter mode="educational" />
+      <DynamicFooter />
     </div>
   );
 };

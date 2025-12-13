@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { Menu, X } from "lucide-react";
@@ -11,23 +11,36 @@ interface DynamicHeaderProps {
 }
 
 const DynamicHeader = ({ mode = "landing", breadcrumb }: DynamicHeaderProps) => {
+  const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const lastScrollY = useRef(0);
   const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentScrollY = window.scrollY;
+      
+      // Show header when scrolling up, hide when scrolling down
+      if (currentScrollY < lastScrollY.current || currentScrollY < 100) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setIsVisible(false);
+        setIsMobileMenuOpen(false);
+      }
+      
+      setIsScrolled(currentScrollY > 50);
+      lastScrollY.current = currentScrollY;
     };
-    window.addEventListener("scroll", handleScroll);
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { label: "Explore", href: "#explore" },
     { label: "Simulate", href: "#simulator" },
-    { label: "Learn", href: "#learn" },
-    { label: "About", href: "#about" },
+    { label: "Why This Matters", href: "#why" },
+    { label: "The Public Balance Sheet", href: "#balance" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -86,12 +99,14 @@ const DynamicHeader = ({ mode = "landing", breadcrumb }: DynamicHeaderProps) => 
     );
   }
 
-  // Landing mode - full navigation
+  // Landing mode - full navigation with hide/show on scroll
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      } ${
         isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-border/20"
+          ? "bg-background/90 backdrop-blur-md border-b border-border/20"
           : "bg-transparent"
       }`}
     >
