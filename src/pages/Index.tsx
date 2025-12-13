@@ -11,7 +11,6 @@ import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
 import CommandPalette from "@/components/CommandPalette";
 import LiveSocietyPulse from "@/components/LiveSocietyPulse";
 import DemoGuide from "@/components/DemoGuide";
-import GuidedTour from "@/components/GuidedTour";
 import { useKeyboardShortcuts, scrollToSection, ShortcutAction } from "@/hooks/useKeyboardShortcuts";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 
@@ -19,7 +18,6 @@ const Index = () => {
   const simulatorRef = useRef<HTMLDivElement>(null);
   const [isArchivistOpen, setIsArchivistOpen] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
-  const [showTour, setShowTour] = useState(false);
   const { toggle: toggleSound, playTap } = useAmbientSound();
 
   const scrollToSimulator = () => {
@@ -146,8 +144,7 @@ const Index = () => {
         onShowShortcuts={() => setShowHelp(true)} 
       />
       <LiveSocietyPulse focusMode={focusMode} />
-      <DemoGuide onRestartTour={() => setShowTour(true)} />
-      <GuidedTour forceStart={showTour} onTourEnd={() => setShowTour(false)} />
+      <DemoGuide />
     </div>
   );
 };
