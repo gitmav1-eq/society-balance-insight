@@ -3,8 +3,14 @@ project_id = "xhvrrptudydjxcyjvurx"
 [functions.simulate-behavior]
 verify_jwt = false
 
+[functions.simulate-behavior-v2]
+verify_jwt = false
+
 [functions.ai-guide]
 verify_jwt = false
 
 [functions.society-chat]
+verify_jwt = false
+
+[functions.archivist-chat]
 verify_jwt = false
