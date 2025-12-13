@@ -85,32 +85,41 @@ serve(async (req) => {
           : parsed;
         
         // Normalize and ensure all values are strings
-        const result = {
-          individual: String(source.individual || source.impact || ""),
-          collective: String(source.collective || ""),
-          pressure: String(source.pressure || ""),
-          lever: String(source.lever || "")
-        };
+        const individual = String(source.individual || source.impact || "").trim();
+        const collective = String(source.collective || "").trim();
+        const pressure = String(source.pressure || "").trim();
+        const lever = String(source.lever || "").trim();
         
-        console.log("Parsed result:", JSON.stringify(result));
+        // Check if we got valid content
+        if (individual && collective && pressure && lever) {
+          const result = { individual, collective, pressure, lever };
+          console.log("Parsed result:", JSON.stringify(result));
+          return new Response(
+            JSON.stringify({ result }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
         
-        return new Response(
-          JSON.stringify({ result }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        console.log("Incomplete JSON response, using fallback");
       } catch (e) {
         console.error("JSON parse error:", e);
       }
     }
 
-    // Fallback: parse sections manually
+    // Fallback: parse sections manually or use defaults
+    console.log("Using fallback extraction for:", behavior);
     const result = {
-      individual: extractSection(content, "individual") || "Impact on personal financial flexibility and short-term decision making.",
-      collective: extractSection(content, "collective") || "Systemic effects emerge as millions adopt this pattern over decades.",
-      pressure: extractSection(content, "pressure") || "Stress accumulates across households, institutions, and future generations.",
-      lever: extractSection(content, "lever") || "Policy adjustments combined with cultural awareness can shift trajectories."
+      individual: extractSection(content, "individual") || 
+        `When individuals ${behavior.toLowerCase()}, it creates immediate convenience but may reduce financial flexibility over time. Short-term benefits often mask long-term costs.`,
+      collective: extractSection(content, "collective") || 
+        `When millions adopt this pattern over 10-30 years, it reshapes credit markets, alters institutional risk calculations, and shifts how society values immediate versus delayed gratification.`,
+      pressure: extractSection(content, "pressure") || 
+        `Pressure accumulates on household debt capacity, banking system stability, and social safety nets as more people become dependent on this financial pattern.`,
+      lever: extractSection(content, "lever") || 
+        `Financial literacy programs, transparent pricing regulations, and cultural conversations about deferred costs can help individuals make more informed choices.`
     };
 
+    console.log("Fallback result:", JSON.stringify(result));
     return new Response(
       JSON.stringify({ result }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
