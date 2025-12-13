@@ -309,9 +309,29 @@ const NormalizationSimulator = () => {
               </div>
             </div>
 
-            <Button variant="outline" onClick={handleReset} size="sm" className="text-muted-foreground">
-              ← Explore another
-            </Button>
+            {/* Related behaviors to keep users engaged */}
+            <div className="pt-6 border-t border-border/20">
+              <p className="font-mono text-[8px] tracking-widest text-muted-foreground/50 mb-3">
+                EXPLORE RELATED PATTERNS
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {presetBehaviors
+                  .filter(b => b.toLowerCase() !== displayBehavior.toLowerCase())
+                  .slice(0, 3)
+                  .map((behavior, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSimulate(behavior, true)}
+                      className="text-[11px] px-3 py-1.5 text-muted-foreground/70 hover:text-foreground border border-border/30 hover:border-primary/50 hover:bg-primary/5 rounded-sm transition-colors"
+                    >
+                      {behavior}
+                    </button>
+                  ))}
+              </div>
+              <Button variant="outline" onClick={handleReset} size="sm" className="text-muted-foreground">
+                ← Start fresh
+              </Button>
+            </div>
           </div>
         ) : null}
       </div>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
-import { X, MessageSquare, Send, Loader2 } from "lucide-react";
+import { X, MessageSquare, Send } from "lucide-react";
 
 interface Message {
   role: "user" | "archivist";
@@ -146,10 +146,17 @@ const ArchivistChat = () => {
               ))}
               {isLoading && (
                 <div className="p-3 bg-card/50 border border-border/30 mr-8 rounded-sm">
-                  <p className="font-mono text-[8px] tracking-widest text-muted-foreground/50 mb-1">
+                  <p className="font-mono text-[8px] tracking-widest text-muted-foreground/50 mb-2">
                     ARCHIVIST
                   </p>
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
+                      <span className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground/50">Consulting the archive...</span>
+                  </div>
                 </div>
               )}
             </div>
