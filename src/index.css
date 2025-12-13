@@ -96,63 +96,69 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 220 20% 6%;
-    --foreground: 210 40% 98%;
+    /* Deep space navy / charcoal background */
+    --background: 222 30% 8%;
+    --foreground: 210 20% 95%;
 
-    --card: 220 20% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 222 25% 11%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 220 20% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222 25% 13%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 220 20% 6%;
+    /* Muted cyan accent */
+    --primary: 185 60% 55%;
+    --primary-foreground: 222 30% 8%;
 
-    --secondary: 215 19% 20%;
-    --secondary-foreground: 210 40% 98%;
+    /* Soft gold secondary */
+    --secondary: 42 60% 50%;
+    --secondary-foreground: 222 30% 8%;
 
-    --muted: 215 16% 30%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 222 20% 20%;
+    --muted-foreground: 210 15% 60%;
 
-    --accent: 217 91% 60%;
-    --accent-foreground: 220 20% 6%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 85% 97%;
-
-    --border: 215 20% 20%;
-    --input: 215 20% 20%;
-    --ring: 217 91% 60%;
-  }
-
-  .ambient {
-    --background: 230 25% 7%;
-    --foreground: 220 20% 85%;
-
-    --card: 230 22% 10%;
-    --card-foreground: 220 20% 85%;
-
-    --popover: 230 22% 12%;
-    --popover-foreground: 220 20% 85%;
-
-    --primary: 220 60% 55%;
-    --primary-foreground: 230 25% 7%;
-
-    --secondary: 250 40% 45%;
-    --secondary-foreground: 230 25% 7%;
-
-    --muted: 230 20% 20%;
-    --muted-foreground: 220 20% 60%;
-
-    --accent: 250 40% 45%;
-    --accent-foreground: 230 25% 7%;
+    --accent: 185 60% 55%;
+    --accent-foreground: 222 30% 8%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 85% 97%;
 
-    --border: 230 20% 18%;
-    --input: 230 20% 18%;
-    --ring: 220 60% 55%;
+    --border: 222 20% 18%;
+    --input: 222 20% 18%;
+    --ring: 185 60% 55%;
+  }
+
+  .ambient {
+    /* Deep meditative space */
+    --background: 225 28% 6%;
+    --foreground: 215 20% 80%;
+
+    --card: 225 25% 9%;
+    --card-foreground: 215 20% 80%;
+
+    --popover: 225 25% 11%;
+    --popover-foreground: 215 20% 80%;
+
+    /* Softer, more muted cyan */
+    --primary: 190 45% 45%;
+    --primary-foreground: 225 28% 6%;
+
+    /* Warm muted gold */
+    --secondary: 38 40% 45%;
+    --secondary-foreground: 225 28% 6%;
+
+    --muted: 225 18% 18%;
+    --muted-foreground: 215 15% 50%;
+
+    --accent: 190 45% 45%;
+    --accent-foreground: 225 28% 6%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 85% 97%;
+
+    --border: 225 18% 15%;
+    --input: 225 18% 15%;
+    --ring: 190 45% 45%;
   }
 
   /* Ambient mode: slower, meditative animations */

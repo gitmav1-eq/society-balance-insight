@@ -3,11 +3,11 @@ import Header from "@/components/Header";
 import ContextHeader from "@/components/ContextHeader";
 import HeroSection from "@/components/HeroSection";
 import NormalizationSimulator from "@/components/NormalizationSimulator";
-import CompoundingGame from "@/components/CompoundingGame";
+import PlaySection from "@/components/PlaySection";
 import ImpactVisualization from "@/components/ImpactVisualization";
 import AskSocietyChatbot from "@/components/AskSocietyChatbot";
 import SocialReflection from "@/components/SocialReflection";
-import DynamicFooter from "@/components/DynamicFooter";
+import MultiLayerFooter from "@/components/MultiLayerFooter";
 import TheArchivist from "@/components/TheArchivist";
 import LiveSocietyPulse from "@/components/LiveSocietyPulse";
 
@@ -49,16 +49,16 @@ const Index = () => {
           <NormalizationSimulator />
         </div>
         
-        <CompoundingGame />
-        
         <ImpactVisualization />
+        
+        <PlaySection />
         
         <AskSocietyChatbot />
         
         <SocialReflection />
       </main>
       
-      <DynamicFooter />
+      <MultiLayerFooter />
       <TheArchivist />
       <LiveSocietyPulse />
     </div>

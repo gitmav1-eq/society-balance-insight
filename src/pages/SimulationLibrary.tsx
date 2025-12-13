@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
-import DynamicFooter from "@/components/DynamicFooter";
+import MultiLayerFooter from "@/components/MultiLayerFooter";
 
 const simulations = [
   {
@@ -139,7 +139,7 @@ const SimulationLibrary = () => {
         </div>
       </main>
 
-      <DynamicFooter />
+      <MultiLayerFooter />
     </div>
   );
 };
