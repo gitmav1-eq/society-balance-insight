@@ -3,6 +3,7 @@ import DynamicHeader from "@/components/DynamicHeader";
 import HeroSection from "@/components/HeroSection";
 import NormalizationSimulator from "@/components/NormalizationSimulator";
 import PerspectiveShift from "@/components/PerspectiveShift";
+import PublicBalanceSheet from "@/components/PublicBalanceSheet";
 import DailySignal from "@/components/DailySignal";
 import DynamicFooter from "@/components/DynamicFooter";
 import ArchivistChat from "@/components/ArchivistChat";
@@ -128,6 +129,8 @@ const Index = () => {
         </div>
         
         <PerspectiveShift />
+        
+        <PublicBalanceSheet />
         
         <DailySignal />
       </main>
