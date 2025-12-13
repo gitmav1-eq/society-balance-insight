@@ -4,6 +4,20 @@ import * as THREE from "three";
 
 const mouseState = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
+// Frame limiter to reduce CPU usage - only render at 20fps instead of 60fps
+function useFrameLimited(callback: (state: { clock: THREE.Clock }) => void, fps = 20) {
+  const lastTime = useRef(0);
+  const interval = 1000 / fps;
+  
+  useFrame((state) => {
+    const now = state.clock.elapsedTime * 1000;
+    if (now - lastTime.current >= interval) {
+      lastTime.current = now;
+      callback(state);
+    }
+  });
+}
+
 function ParallaxCamera() {
   const { camera } = useThree();
   const scrollProgress = useRef(0);
@@ -29,7 +43,7 @@ function ParallaxCamera() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useFrame(() => {
+  useFrameLimited((state) => {
     const progress = scrollProgress.current;
     camera.position.z = 8 + progress * 2;
     camera.position.y = progress * 1.5 - 0.5;
@@ -51,7 +65,7 @@ function CentralSphere({ theme }: { theme: string }) {
     }
   }, [theme]);
 
-  useFrame((state) => {
+  useFrameLimited((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y = state.clock.elapsedTime * 0.05;
     }
@@ -59,7 +73,7 @@ function CentralSphere({ theme }: { theme: string }) {
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[0.8, 32, 32]} />
+      <sphereGeometry args={[0.8, 24, 24]} />
       <meshStandardMaterial 
         color={color} 
         transparent 
@@ -81,17 +95,16 @@ function OrbitRing({ radius, speed, theme, opacity = 0.1 }: { radius: number; sp
     }
   }, [theme]);
 
-  useFrame((state) => {
+  useFrameLimited((state) => {
     if (groupRef.current) {
-      // Much slower rotation
       groupRef.current.rotation.z = state.clock.elapsedTime * speed * 0.3;
     }
   });
 
   const points = useMemo(() => {
     const pts = [];
-    for (let i = 0; i <= 64; i++) {
-      const angle = (i / 64) * Math.PI * 2;
+    for (let i = 0; i <= 32; i++) {
+      const angle = (i / 32) * Math.PI * 2;
       pts.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0));
     }
     return pts;
@@ -108,14 +121,14 @@ function OrbitRing({ radius, speed, theme, opacity = 0.1 }: { radius: number; sp
         <lineBasicMaterial color={color} transparent opacity={opacity} />
       </line>
       <mesh position={[radius, 0, 0]}>
-        <sphereGeometry args={[0.03, 12, 12]} />
+        <sphereGeometry args={[0.03, 8, 8]} />
         <meshBasicMaterial color={color} transparent opacity={0.6} />
       </mesh>
     </group>
   );
 }
 
-function StarField({ count = 150 }: { count?: number }) {
+function StarField({ count = 80 }: { count?: number }) {
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -139,7 +152,7 @@ function StarField({ count = 150 }: { count?: number }) {
 function OrbitSystem({ theme }: { theme: string }) {
   const groupRef = useRef<THREE.Group>(null);
 
-  useFrame(() => {
+  useFrameLimited(() => {
     mouseState.x += (mouseState.targetX - mouseState.x) * 0.03;
     mouseState.y += (mouseState.targetY - mouseState.y) * 0.03;
     
@@ -162,6 +175,8 @@ function OrbitSystem({ theme }: { theme: string }) {
 
 const SystemVisualization = ({ theme, className = "" }: { theme: string; className?: string }) => {
   const [mounted, setMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => { 
     setMounted(true);
@@ -171,27 +186,68 @@ const SystemVisualization = ({ theme, className = "" }: { theme: string; classNa
       mouseState.targetY = (e.clientY / window.innerHeight - 0.5) * 2;
     };
     
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Only render when visible in viewport
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, []);
   
   if (!mounted) return null;
 
   return (
-    <div className={`w-full h-full ${className}`}>
-      <Canvas 
-        camera={{ position: [0, 0, 8], fov: 45 }} 
-        gl={{ antialias: true, alpha: true }} 
-        style={{ background: "transparent" }} 
-        dpr={[1, 1.5]}
-      >
-        <ambientLight intensity={0.4} />
-        <pointLight position={[5, 5, 5]} intensity={0.3} />
-        <ParallaxCamera />
-        <OrbitSystem theme={theme} />
-      </Canvas>
+    <div ref={containerRef} className={`w-full h-full ${className}`}>
+      {isVisible && (
+        <Canvas 
+          camera={{ position: [0, 0, 8], fov: 45 }} 
+          gl={{ antialias: false, alpha: true, powerPreference: "low-power" }} 
+          style={{ background: "transparent" }} 
+          dpr={1}
+          frameloop="demand"
+        >
+          <ambientLight intensity={0.4} />
+          <pointLight position={[5, 5, 5]} intensity={0.3} />
+          <ParallaxCamera />
+          <OrbitSystem theme={theme} />
+          <FrameInvalidator />
+        </Canvas>
+      )}
     </div>
   );
 };
+
+// Invalidate at 20fps instead of 60fps
+function FrameInvalidator() {
+  const { invalidate } = useThree();
+  
+  useEffect(() => {
+    let animationId: number;
+    let lastTime = 0;
+    const interval = 1000 / 20; // 20fps
+    
+    const animate = (time: number) => {
+      if (time - lastTime >= interval) {
+        lastTime = time;
+        invalidate();
+      }
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, [invalidate]);
+  
+  return null;
+}
 
 export default SystemVisualization;
