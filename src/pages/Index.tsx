@@ -1,12 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useRef } from "react";
+import Hero from "@/components/Hero";
+import NormalizationSimulator from "@/components/NormalizationSimulator";
+import SocietalBalanceSheet from "@/components/SocietalBalanceSheet";
+import WhyThisMatters from "@/components/WhyThisMatters";
+import ClosingStatement from "@/components/ClosingStatement";
+import Footer from "@/components/Footer";
 
 const Index = () => {
+  const simulatorRef = useRef<HTMLDivElement>(null);
+  const whyRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSimulator = () => {
+    simulatorRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToWhy = () => {
+    whyRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background text-foreground">
+      <Hero onSimulateClick={scrollToSimulator} onWhyClick={scrollToWhy} />
+      
+      <div ref={simulatorRef}>
+        <NormalizationSimulator />
       </div>
+      
+      <div ref={whyRef}>
+        <WhyThisMatters />
+      </div>
+      
+      <SocietalBalanceSheet />
+      
+      <ClosingStatement />
+      
+      <Footer />
     </div>
   );
 };
