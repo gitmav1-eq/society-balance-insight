@@ -7,9 +7,10 @@ interface ContextHeaderProps {
 
 const sectionData: Record<string, { title: string; insight: string }> = {
   hero: { title: "WELCOME", insight: "Understanding precedes change" },
-  simulator: { title: "SIMULATOR", insight: "Project collective trajectories" },
-  impact: { title: "IMPACT", insight: "Individual → Collective → Systemic" },
-  explore: { title: "EXPLORE", insight: "Query the intelligence system" },
+  simulator: { title: "SIMULATE", insight: "Project collective trajectories" },
+  impact: { title: "LEARN", insight: "Individual → Collective → Systemic" },
+  play: { title: "PLAY", insight: "Reflective mini-experiences" },
+  explore: { title: "WHY IT MATTERS", insight: "Query the intelligence system" },
   reflection: { title: "REFLECTION", insight: "Collective insights from users" },
 };
 

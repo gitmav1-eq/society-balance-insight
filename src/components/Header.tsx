@@ -18,10 +18,10 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { label: "Simulator", href: "#simulator" },
-    { label: "Society Impact", href: "#impact" },
-    { label: "Explore", href: "#explore" },
-    { label: "About", href: "#about" },
+    { label: "Simulate", href: "#simulator" },
+    { label: "Learn", href: "#impact" },
+    { label: "Play", href: "#play" },
+    { label: "Why It Matters", href: "#explore" },
   ];
 
   const scrollToSection = (href: string) => {
