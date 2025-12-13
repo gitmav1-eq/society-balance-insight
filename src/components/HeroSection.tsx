@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from "react";
+import { useEffect, useRef, lazy, Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "./ThemeProvider";
 
@@ -12,6 +12,21 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
   const { theme } = useTheme();
   const contentRef = useRef<HTMLDivElement>(null);
   const animatedRef = useRef(false);
+  const [shouldLoadThree, setShouldLoadThree] = useState(false);
+
+  // Defer Three.js loading to reduce FID - load after initial paint
+  useEffect(() => {
+    const loadThreeJs = () => setShouldLoadThree(true);
+    
+    // Use requestIdleCallback if available, otherwise setTimeout
+    if ('requestIdleCallback' in window) {
+      const id = (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(loadThreeJs, { timeout: 2000 });
+      return () => (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(loadThreeJs, 100);
+      return () => clearTimeout(id);
+    }
+  }, []);
 
   useEffect(() => {
     if (animatedRef.current) return;
@@ -41,9 +56,11 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       <div className="absolute inset-0 -z-10 opacity-40">
-        <Suspense fallback={<div className="w-full h-full" />}>
-          <SystemVisualization theme={theme} />
-        </Suspense>
+        {shouldLoadThree && (
+          <Suspense fallback={<div className="w-full h-full" />}>
+            <SystemVisualization theme={theme} />
+          </Suspense>
+        )}
       </div>
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/5 via-background/30 to-background" />
 
