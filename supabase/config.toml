@@ -2,3 +2,6 @@ project_id = "xhvrrptudydjxcyjvurx"
 
 [functions.simulate-behavior]
 verify_jwt = false
+
+[functions.ai-guide]
+verify_jwt = false

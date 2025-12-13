@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const simulations = [
   {
@@ -51,35 +52,42 @@ const simulations = [
 
 const SimulationLibrary = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="py-8 px-6 md:px-12 lg:px-24 border-b border-border">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      <header className="py-6 px-6 md:px-12 lg:px-24 border-b border-border sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link to="/" className="font-mono text-sm tracking-widest text-muted-foreground hover:text-foreground transition-colors">
             SOCIETY.EXE
           </Link>
-          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            ← Back to Simulator
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              ← Simulator
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
       <main className="py-16 px-6 md:px-12 lg:px-24">
         <div className="max-w-4xl mx-auto">
-          <p className="font-mono text-sm tracking-widest text-muted-foreground mb-4">
+          <p className="font-mono text-sm tracking-widest text-muted-foreground mb-4 animate-fade-in">
             SIMULATION LIBRARY
           </p>
           
-          <h1 className="font-serif text-4xl md:text-5xl mb-6">
+          <h1 className="font-serif text-4xl md:text-5xl mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             Curated Projections
           </h1>
           
-          <p className="text-muted-foreground mb-16 max-w-2xl text-lg leading-relaxed">
+          <p className="text-muted-foreground mb-16 max-w-2xl text-lg leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
             Pre-generated analyses of common normalized behaviors and their long-term societal trajectories. Each simulation represents the collective impact of millions of individual choices.
           </p>
 
           <div className="space-y-16">
-            {simulations.map((sim) => (
-              <article key={sim.id} className="border-t border-border pt-12">
+            {simulations.map((sim, index) => (
+              <article 
+                key={sim.id} 
+                className="border-t border-border pt-12 animate-fade-in"
+                style={{ animationDelay: `${0.1 * (index + 3)}s` }}
+              >
                 <div className="mb-8">
                   <p className="font-mono text-xs text-muted-foreground mb-3">NORMALIZED BEHAVIOR</p>
                   <h2 className="font-serif text-2xl md:text-3xl">{sim.behavior}</h2>

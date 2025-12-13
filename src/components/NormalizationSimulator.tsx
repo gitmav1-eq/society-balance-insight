@@ -13,7 +13,11 @@ const presetBehaviors = [
   "Credit-led consumption culture",
 ];
 
-const NormalizationSimulator = () => {
+interface NormalizationSimulatorProps {
+  onSimulationComplete?: (behavior: string) => void;
+}
+
+const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulatorProps) => {
   const [behavior, setBehavior] = useState("");
   const [simulation, setSimulation] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +45,7 @@ const NormalizationSimulator = () => {
 
       if (data?.simulation) {
         setSimulation(data.simulation);
+        onSimulationComplete?.(behaviorToSimulate);
       } else {
         toast.error("No simulation was generated");
       }
@@ -55,6 +60,7 @@ const NormalizationSimulator = () => {
   const handleReset = () => {
     setSimulation(null);
     setBehavior("");
+    onSimulationComplete?.("");
   };
 
   return (
@@ -80,7 +86,7 @@ const NormalizationSimulator = () => {
                   key={index}
                   onClick={() => handleSimulate(preset)}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm border border-border bg-card hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 text-sm border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {preset}
                 </button>
@@ -101,12 +107,19 @@ const NormalizationSimulator = () => {
                 disabled={isLoading || !behavior.trim()}
                 className="px-8 py-6"
               >
-                {isLoading ? "Simulating..." : "Run Simulation"}
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                    Simulating...
+                  </span>
+                ) : (
+                  "Run Simulation"
+                )}
               </Button>
             </div>
           </>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-fade-in">
             <div className="p-4 bg-card border border-border">
               <p className="font-mono text-xs text-muted-foreground mb-2">SIMULATING</p>
               <p className="text-foreground">{behavior}</p>
