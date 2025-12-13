@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import SimulatorSkeleton from "@/components/ui/SimulatorSkeleton";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 import { StarryButton } from "@/components/ui/StarryButton";
+import CosmicParticles from "@/components/ui/CosmicParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -192,8 +193,11 @@ const NormalizationSimulator = () => {
   }, [playTap]);
 
   return (
-    <section ref={sectionRef} id="simulator" className="py-24 px-6">
-      <div className="max-w-3xl mx-auto">
+    <section ref={sectionRef} id="simulator" className="py-24 px-6 relative overflow-hidden">
+      {/* Cosmic particle background */}
+      <CosmicParticles />
+      
+      <div className="max-w-3xl mx-auto relative z-10">
         <div ref={headerRef} className="text-center mb-14">
           <p className="sim-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/50 mb-6">SIMULATION</p>
           <h2 className="sim-animate text-2xl md:text-3xl font-bold mb-4">
