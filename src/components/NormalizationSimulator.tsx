@@ -3,111 +3,105 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import SimulationResult from "./SimulationResult";
 
 const presetBehaviors = [
-  "Buying everything on EMI",
-  "Delaying savings until 40",
+  "EMI culture",
+  "Delayed savings",
   "Lifestyle inflation",
   "Gig work without safety nets",
-  "Credit-first living",
+  "Credit dependence",
 ];
 
-interface NormalizationSimulatorProps {
-  onSimulationComplete?: (behavior: string) => void;
+interface SimulationResult {
+  individual: string;
+  collective: string;
+  pressure: string;
+  lever: string;
 }
 
-const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulatorProps) => {
+const NormalizationSimulator = () => {
   const [behavior, setBehavior] = useState("");
-  const [simulation, setSimulation] = useState<string | null>(null);
+  const [result, setResult] = useState<SimulationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSimulate = async (behaviorToSimulate: string) => {
     if (!behaviorToSimulate.trim()) {
-      toast.error("Please select or enter a behavior");
+      toast.error("Select or enter a behavior");
       return;
     }
 
     setIsLoading(true);
-    setSimulation(null);
+    setResult(null);
     setBehavior(behaviorToSimulate);
 
     try {
-      const { data, error } = await supabase.functions.invoke("simulate-behavior", {
+      const { data, error } = await supabase.functions.invoke("simulate-behavior-v2", {
         body: { behavior: behaviorToSimulate },
       });
 
-      if (error) {
-        console.error("Simulation error:", error);
-        toast.error(error.message || "Simulation failed");
-        return;
-      }
+      if (error) throw error;
 
-      if (data?.simulation) {
-        setSimulation(data.simulation);
-        onSimulationComplete?.(behaviorToSimulate);
+      if (data?.result) {
+        setResult(data.result);
       } else {
-        toast.error("No simulation generated");
+        toast.error("Simulation failed");
       }
     } catch (err) {
       console.error("Error:", err);
-      toast.error("System error occurred");
+      toast.error("System error");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleReset = () => {
-    setSimulation(null);
+    setResult(null);
     setBehavior("");
-    onSimulationComplete?.("");
   };
 
   return (
     <section id="simulator" className="py-24 px-6 md:px-12 lg:px-24 border-t border-border">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground mb-4">
-            NORMALIZATION SIMULATOR
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-16">
+          <p className="font-mono text-[10px] tracking-[0.4em] text-primary mb-4">
+            THE NORMALIZATION SIMULATOR
           </p>
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-4">
-            Project the collective trajectory
+            Project the trajectory
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Select a normalized behavior. See how it scales across society over decades.
+            Select a normalized behavior. See its individual and collective impact unfold over decades.
           </p>
         </div>
 
-        {!simulation ? (
-          <div className="border border-border bg-card/30 backdrop-blur-sm p-8">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-6">
-              SELECT BEHAVIOR
+        {!result ? (
+          <div className="border border-border bg-card/30 backdrop-blur-sm p-8 md:p-12">
+            <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-6">
+              SELECT BEHAVIOR TO SIMULATE
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+            <div className="flex flex-wrap gap-3 mb-8">
               {presetBehaviors.map((preset, index) => (
                 <button
                   key={index}
                   onClick={() => handleSimulate(preset)}
                   disabled={isLoading}
-                  className="p-4 text-sm text-left border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                  className="px-5 py-3 text-sm border border-border bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="block group-hover:translate-x-1 transition-transform">
-                    {preset}
-                  </span>
+                  {preset}
                 </button>
               ))}
             </div>
 
             <div className="border-t border-border pt-6">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-4">
-                OR DESCRIBE YOUR OWN
+              <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-4">
+                OR DESCRIBE CUSTOM BEHAVIOR
               </p>
               <Textarea
-                placeholder="Describe a normalized financial behavior..."
+                placeholder="Enter a financial behavior to simulate..."
                 value={behavior}
                 onChange={(e) => setBehavior(e.target.value)}
-                className="min-h-[100px] resize-none bg-background border-border mb-4"
+                className="min-h-[80px] resize-none bg-background border-border mb-4"
                 disabled={isLoading}
               />
               
@@ -119,7 +113,7 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
                 {isLoading ? (
                   <span className="flex items-center gap-2">
                     <span className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                    Simulating...
+                    Processing...
                   </span>
                 ) : (
                   "Run Simulation"
@@ -128,16 +122,70 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
             </div>
           </div>
         ) : (
-          <div className="space-y-8 animate-fade-in">
-            <div className="p-4 bg-primary/10 border border-primary/20">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-2">
+          <div className="space-y-6 animate-fade-in">
+            {/* Behavior Label */}
+            <div className="p-4 bg-primary/10 border border-primary/30">
+              <p className="font-mono text-[9px] tracking-widest text-primary mb-1">
                 SIMULATING
               </p>
-              <p className="text-foreground font-medium">{behavior}</p>
+              <p className="text-lg font-medium">{behavior}</p>
             </div>
-            
-            <SimulationResult content={simulation} />
-            
+
+            {/* Results Grid */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Individual Impact */}
+              <div className="p-6 border border-border bg-card/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full" />
+                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
+                    INDIVIDUAL IMPACT
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {result.individual}
+                </p>
+              </div>
+
+              {/* Collective Impact */}
+              <div className="p-6 border border-border bg-card/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full" />
+                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
+                    COLLECTIVE IMPACT (10-30 YEARS)
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {result.collective}
+                </p>
+              </div>
+
+              {/* System Pressure */}
+              <div className="p-6 border border-border bg-card/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full" />
+                  <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
+                    SYSTEM PRESSURE POINTS
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {result.pressure}
+                </p>
+              </div>
+
+              {/* Lever for Change */}
+              <div className="p-6 border border-primary/30 bg-primary/5">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 bg-primary rounded-full" />
+                  <p className="font-mono text-[9px] tracking-widest text-primary">
+                    LEVER FOR CHANGE
+                  </p>
+                </div>
+                <p className="text-sm text-foreground leading-relaxed">
+                  {result.lever}
+                </p>
+              </div>
+            </div>
+
             <Button
               variant="outline"
               onClick={handleReset}
