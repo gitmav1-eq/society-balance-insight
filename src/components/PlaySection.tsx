@@ -1,7 +1,17 @@
+import { useState, useEffect } from "react";
 import OrbitGame from "./games/OrbitGame";
 import TimeShiftGame from "./games/TimeShiftGame";
+import GameCardSkeleton from "@/components/ui/GameCardSkeleton";
 
 const PlaySection = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Simulate brief load for smooth transition
+    const timer = setTimeout(() => setIsLoaded(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section id="play" className="py-20 px-6">
       <div className="max-w-4xl mx-auto">
@@ -16,8 +26,17 @@ const PlaySection = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <OrbitGame />
-          <TimeShiftGame />
+          {isLoaded ? (
+            <>
+              <OrbitGame />
+              <TimeShiftGame />
+            </>
+          ) : (
+            <>
+              <GameCardSkeleton />
+              <GameCardSkeleton />
+            </>
+          )}
         </div>
 
         <div className="mt-10 text-center">
