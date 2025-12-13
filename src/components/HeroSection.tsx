@@ -44,54 +44,37 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      <div className="absolute inset-0 -z-10 opacity-50">
+      <div className="absolute inset-0 -z-10 opacity-60">
         <SystemVisualization theme={theme} />
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/20 via-background/50 to-background" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/10 via-background/40 to-background" />
 
-      <div ref={contentRef} className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        <p className="hero-animate font-mono text-[10px] tracking-[0.4em] text-primary mb-8">
-          PUBLIC FINANCIAL INTELLIGENCE ENGINE
+      <div ref={contentRef} className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        <p className="hero-animate font-mono text-[10px] tracking-[0.5em] text-muted-foreground mb-6">
+          UNDERSTAND HOW EVERYDAY DECISIONS MOVE SOCIETY
         </p>
         
-        <h1 className="hero-animate font-serif text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.1] mb-8 font-bold">
-          What we repeat today becomes
+        <h1 className="hero-animate text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-6 font-bold">
+          Society is a shared spaceship.
           <br />
-          tomorrow's <span className="text-primary">crisis</span> — or <span className="text-primary">strength</span>.
+          <span className="text-primary">Small actions change its orbit.</span>
         </h1>
         
-        <p className="hero-animate text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
-          Simulate how everyday financial behaviors scale across society. 
-          Understand before it's too late to change.
+        <p className="hero-animate text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+          Explore how financial behaviors compound across decades.
+          No jargon. No dashboards. Just clarity.
         </p>
         
         <div className="hero-animate flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={onSimulateClick} size="lg" className="px-10 py-6 text-base font-medium">
-            Run Simulation
+          <Button onClick={onSimulateClick} size="lg" className="px-8 py-6 text-base font-medium">
+            Explore a Behavior
           </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => document.querySelector("#explore")?.scrollIntoView({ behavior: "smooth" })}
-            className="px-10 py-6 text-base"
-          >
-            Query System
-          </Button>
-        </div>
-
-        <div className="hero-animate mt-16 flex items-center justify-center gap-6 text-[10px] font-mono text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-            SYSTEM ACTIVE
-          </span>
-          <span>|</span>
-          <span>PROJECTION RANGE: 10-30 YEARS</span>
         </div>
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="flex flex-col items-center gap-2 text-muted-foreground">
-          <span className="text-[9px] font-mono tracking-widest">SCROLL</span>
+          <span className="text-[9px] font-mono tracking-widest opacity-60">SCROLL</span>
           <div className="w-px h-8 bg-gradient-to-b from-border to-transparent" />
         </div>
       </div>
