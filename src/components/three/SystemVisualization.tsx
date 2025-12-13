@@ -6,6 +6,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Global mouse state
+const mouseState = { x: 0, y: 0, targetX: 0, targetY: 0 };
+
 function ParallaxCamera() {
   const { camera } = useThree();
   const scrollProgress = useRef({ value: 0 });
@@ -36,6 +39,7 @@ function ParallaxCamera() {
 }
 
 function SocietyNodes({ theme, count = 120 }: { theme: string; count?: number }) {
+  const groupRef = useRef<THREE.Group>(null);
   const pointsRef = useRef<THREE.Points>(null);
   const linesRef = useRef<THREE.LineSegments>(null);
 
@@ -71,13 +75,14 @@ function SocietyNodes({ theme, count = 120 }: { theme: string; count?: number })
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = time * 0.03;
-      pointsRef.current.rotation.x = Math.sin(time * 0.02) * 0.1;
-    }
-    if (linesRef.current) {
-      linesRef.current.rotation.y = time * 0.03;
-      linesRef.current.rotation.x = Math.sin(time * 0.02) * 0.1;
+    
+    // Smooth mouse follow
+    mouseState.x += (mouseState.targetX - mouseState.x) * 0.05;
+    mouseState.y += (mouseState.targetY - mouseState.y) * 0.05;
+    
+    if (groupRef.current) {
+      groupRef.current.rotation.y = time * 0.03 + mouseState.x * 0.3;
+      groupRef.current.rotation.x = Math.sin(time * 0.02) * 0.1 + mouseState.y * 0.2;
     }
   });
 
@@ -90,7 +95,7 @@ function SocietyNodes({ theme, count = 120 }: { theme: string; count?: number })
   }, [theme]);
 
   return (
-    <group>
+    <group ref={groupRef}>
       <lineSegments ref={linesRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" count={linePositions.length / 3} array={linePositions} itemSize={3} />
@@ -109,7 +114,19 @@ function SocietyNodes({ theme, count = 120 }: { theme: string; count?: number })
 
 const SystemVisualization = ({ theme, className = "" }: { theme: string; className?: string }) => {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  
+  useEffect(() => { 
+    setMounted(true);
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseState.targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseState.targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+  
   if (!mounted) return null;
 
   return (
