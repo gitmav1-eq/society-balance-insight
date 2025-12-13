@@ -41,6 +41,7 @@ const shortcutGroups: ShortcutGroup[] = [
       { key: "T", description: "Toggle theme" },
       { key: "M", description: "Toggle sound" },
       { key: "A", description: "Open Archivist chat" },
+      { key: "F", description: "Toggle focus mode" },
       { key: "?", description: "Show this help" },
     ],
   },
