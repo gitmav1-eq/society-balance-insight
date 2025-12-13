@@ -77,7 +77,14 @@ serve(async (req) => {
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       try {
-        const result = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]);
+        // Normalize key variations (AI sometimes returns 'impact' instead of 'individual')
+        const result = {
+          individual: parsed.individual || parsed.impact || "",
+          collective: parsed.collective || "",
+          pressure: parsed.pressure || "",
+          lever: parsed.lever || ""
+        };
         return new Response(
           JSON.stringify({ result }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
