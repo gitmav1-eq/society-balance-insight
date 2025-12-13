@@ -6,11 +6,11 @@ import { toast } from "sonner";
 import SimulationResult from "./SimulationResult";
 
 const presetBehaviors = [
-  "Widespread EMI dependence for everyday purchases",
-  "Delaying retirement savings until age 40",
-  "Gig economy work without social protection",
-  "Lifestyle inflation matching income growth",
-  "Credit-led consumption culture",
+  "Buying everything on EMI",
+  "Delaying savings until 40",
+  "Lifestyle inflation",
+  "Gig work without safety nets",
+  "Credit-first living",
 ];
 
 interface NormalizationSimulatorProps {
@@ -24,7 +24,7 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
 
   const handleSimulate = async (behaviorToSimulate: string) => {
     if (!behaviorToSimulate.trim()) {
-      toast.error("Please enter a behavior to simulate");
+      toast.error("Please select or enter a behavior");
       return;
     }
 
@@ -39,7 +39,7 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
 
       if (error) {
         console.error("Simulation error:", error);
-        toast.error(error.message || "Failed to generate simulation");
+        toast.error(error.message || "Simulation failed");
         return;
       }
 
@@ -47,11 +47,11 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
         setSimulation(data.simulation);
         onSimulationComplete?.(behaviorToSimulate);
       } else {
-        toast.error("No simulation was generated");
+        toast.error("No simulation generated");
       }
     } catch (err) {
       console.error("Error:", err);
-      toast.error("An unexpected error occurred");
+      toast.error("System error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -66,46 +66,55 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
   return (
     <section id="simulator" className="py-24 px-6 md:px-12 lg:px-24 border-t border-border">
       <div className="max-w-4xl mx-auto">
-        <p className="font-mono text-sm tracking-widest text-muted-foreground mb-4">
-          NORMALIZATION SIMULATOR
-        </p>
-        
-        <h2 className="font-serif text-3xl md:text-4xl mb-6">
-          Project the collective trajectory
-        </h2>
-        
-        <p className="text-muted-foreground mb-12 max-w-2xl">
-          Select a normalized behavior or describe your own. The system will project its long-term societal impact across financial resilience, inequality, stability, and opportunity.
-        </p>
+        <div className="text-center mb-12">
+          <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground mb-4">
+            NORMALIZATION SIMULATOR
+          </p>
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-4">
+            Project the collective trajectory
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Select a normalized behavior. See how it scales across society over decades.
+          </p>
+        </div>
 
         {!simulation ? (
-          <>
-            <div className="flex flex-wrap gap-3 mb-8">
+          <div className="border border-border bg-card/30 backdrop-blur-sm p-8">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-6">
+              SELECT BEHAVIOR
+            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
               {presetBehaviors.map((preset, index) => (
                 <button
                   key={index}
                   onClick={() => handleSimulate(preset)}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-4 text-sm text-left border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
-                  {preset}
+                  <span className="block group-hover:translate-x-1 transition-transform">
+                    {preset}
+                  </span>
                 </button>
               ))}
             </div>
 
-            <div className="space-y-4">
+            <div className="border-t border-border pt-6">
+              <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-4">
+                OR DESCRIBE YOUR OWN
+              </p>
               <Textarea
-                placeholder="Or describe a normalized behavior..."
+                placeholder="Describe a normalized financial behavior..."
                 value={behavior}
                 onChange={(e) => setBehavior(e.target.value)}
-                className="min-h-[120px] resize-none bg-card border-border"
+                className="min-h-[100px] resize-none bg-background border-border mb-4"
                 disabled={isLoading}
               />
               
               <Button
                 onClick={() => handleSimulate(behavior)}
                 disabled={isLoading || !behavior.trim()}
-                className="px-8 py-6"
+                className="w-full md:w-auto px-8"
               >
                 {isLoading ? (
                   <span className="flex items-center gap-2">
@@ -117,22 +126,24 @@ const NormalizationSimulator = ({ onSimulationComplete }: NormalizationSimulator
                 )}
               </Button>
             </div>
-          </>
+          </div>
         ) : (
           <div className="space-y-8 animate-fade-in">
-            <div className="p-4 bg-card border border-border">
-              <p className="font-mono text-xs text-muted-foreground mb-2">SIMULATING</p>
-              <p className="text-foreground">{behavior}</p>
+            <div className="p-4 bg-primary/10 border border-primary/20">
+              <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-2">
+                SIMULATING
+              </p>
+              <p className="text-foreground font-medium">{behavior}</p>
             </div>
             
             <SimulationResult content={simulation} />
             
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={handleReset}
               className="text-muted-foreground"
             >
-              ← Run Another Simulation
+              ← New Simulation
             </Button>
           </div>
         )}
