@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 import { AnimatedOption } from "@/components/ui/AnimatedOption";
 import CosmicParticles from "@/components/ui/CosmicParticles";
+import AmbientNebula from "@/components/ui/AmbientNebula";
 
 interface Scenario {
   question: string;
@@ -59,6 +60,9 @@ const PerspectiveShift = () => {
 
   return (
     <section id="why" className="py-24 px-6 relative overflow-hidden">
+      {/* Ambient nebula glow */}
+      <AmbientNebula intensity="subtle" colorScheme="mixed" />
+      
       {/* Cosmic particle background */}
       <CosmicParticles particleCount={30} showShootingStars intensity="low" />
       

@@ -9,6 +9,7 @@ import SimulatorSkeleton from "@/components/ui/SimulatorSkeleton";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 import { StarryButton } from "@/components/ui/StarryButton";
 import CosmicParticles from "@/components/ui/CosmicParticles";
+import AmbientNebula from "@/components/ui/AmbientNebula";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -194,6 +195,9 @@ const NormalizationSimulator = () => {
 
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6 relative overflow-hidden">
+      {/* Ambient nebula glow */}
+      <AmbientNebula intensity="subtle" colorScheme="primary" />
+      
       {/* Cosmic particle background */}
       <CosmicParticles particleCount={35} showShootingStars intensity="low" />
       
