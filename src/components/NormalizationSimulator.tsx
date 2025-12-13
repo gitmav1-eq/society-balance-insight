@@ -10,11 +10,11 @@ import SimulatorSkeleton from "@/components/ui/SimulatorSkeleton";
 gsap.registerPlugin(ScrollTrigger);
 
 const presetBehaviors = [
-  "Buying on credit as default",
-  "Treating savings as optional",
-  "Lifestyle inflation with income",
-  "Gig work without protections",
-  "Short-term thinking as normal",
+  "Buying on EMI",
+  "Delaying savings",
+  "Lifestyle inflation",
+  "Gig work without protection",
+  "Credit-based consumption",
 ];
 
 interface SimulationResult {
@@ -105,13 +105,13 @@ const NormalizationSimulator = () => {
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6">
       <div className="max-w-3xl mx-auto">
-        <div ref={headerRef} className="text-center mb-12">
-          <p className="sim-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/60 mb-4">FUTURE ORBIT</p>
-          <h2 className="sim-animate text-2xl md:text-3xl font-bold mb-3">
-            Choose a common behavior.
+        <div ref={headerRef} className="text-center mb-14">
+          <p className="sim-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/50 mb-6">SIMULATION</p>
+          <h2 className="sim-animate text-2xl md:text-3xl font-bold mb-4">
+            What behavior should we zoom out on?
           </h2>
-          <p className="sim-animate text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
-            See where society drifts if it stays in this orbit.
+          <p className="sim-animate text-muted-foreground/70 max-w-md mx-auto text-sm leading-relaxed">
+            Select a common behavior. See what happens when millions repeat it over decades.
           </p>
         </div>
 

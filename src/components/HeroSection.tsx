@@ -49,25 +49,20 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       </div>
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/5 via-background/30 to-background" />
 
-      <div ref={contentRef} className="relative z-10 max-w-3xl mx-auto px-6 text-center">
-        <p className="hero-animate font-mono text-[9px] tracking-[0.5em] text-muted-foreground/40 mb-8">
-          EXPLORING THE FINANCIAL UNIVERSE
-        </p>
-        
-        <h1 className="hero-animate text-3xl md:text-4xl lg:text-5xl leading-[1.2] mb-6 font-bold">
-          Small choices.
+      <div ref={contentRef} className="relative z-10 max-w-2xl mx-auto px-6 text-center">
+        <h1 className="hero-animate text-3xl md:text-4xl lg:text-5xl leading-[1.15] mb-6 font-bold">
+          Zoom out.
           <br />
-          <span className="text-primary/90">Collective trajectories.</span>
+          <span className="text-primary/90">See the consequences clearly.</span>
         </h1>
         
-        <p className="hero-animate text-base md:text-lg text-muted-foreground/80 max-w-lg mx-auto mb-10 leading-relaxed">
-          Understand how everyday behaviors shape society over decades.
-          No jargon. Just clarity.
+        <p className="hero-animate text-base md:text-lg text-muted-foreground/70 max-w-md mx-auto mb-12 leading-relaxed">
+          Small everyday choices, when repeated by millions, quietly shape the future.
         </p>
         
         <div className="hero-animate">
-          <Button onClick={onSimulateClick} size="lg" className="px-8 py-6 text-sm font-medium">
-            Enter the Universe
+          <Button onClick={onSimulateClick} size="lg" className="px-10 py-6 text-sm font-medium">
+            Start a Simulation
           </Button>
         </div>
       </div>
