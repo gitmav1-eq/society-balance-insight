@@ -11,6 +11,7 @@ import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
 import CommandPalette from "@/components/CommandPalette";
 import LiveSocietyPulse from "@/components/LiveSocietyPulse";
 import DemoGuide from "@/components/DemoGuide";
+import GuidedTour from "@/components/GuidedTour";
 import { useKeyboardShortcuts, scrollToSection, ShortcutAction } from "@/hooks/useKeyboardShortcuts";
 import { useAmbientSound } from "@/hooks/useAmbientSound";
 
@@ -145,6 +146,7 @@ const Index = () => {
       />
       <LiveSocietyPulse focusMode={focusMode} />
       <DemoGuide />
+      <GuidedTour />
     </div>
   );
 };
