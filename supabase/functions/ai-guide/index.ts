@@ -5,6 +5,31 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 20;
+
+const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+
+function isRateLimited(req: Request): boolean {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const now = Date.now();
+  const existing = rateLimitMap.get(ip);
+
+  if (!existing || now - existing.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitMap.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+
+  if (existing.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  existing.count += 1;
+  rateLimitMap.set(ip, existing);
+  return false;
+}
+
+
 const systemPrompt = `You are ORBIT, a calm and helpful guide for SOCIETY.EXE — a platform that helps people understand how everyday behaviors shape society over decades.
 
 Your role:
@@ -56,6 +81,13 @@ function validateInput(input: unknown): { valid: boolean; error?: string; saniti
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  if (isRateLimited(req)) {
+    return new Response(
+      JSON.stringify({ answer: "Too many requests. Please slow down.", explanation: "Too many requests. Please slow down." }),
+      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 
   try {
