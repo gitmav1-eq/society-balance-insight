@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CosmicParticles from "@/components/ui/CosmicParticles";
 import AmbientNebula from "@/components/ui/AmbientNebula";
+import WorldFinancialMap from "@/components/WorldFinancialMap";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -198,6 +199,16 @@ const PublicBalanceSheet = () => {
             {globalStats.map((stat) => (
               <AnimatedStatCounter key={stat.label} stat={stat} />
             ))}
+          </div>
+        )}
+
+        {/* World Financial Map */}
+        {showStats && (
+          <div className="mb-16 animate-fade-in">
+            <p className="font-mono text-[9px] tracking-widest text-muted-foreground/50 mb-4 text-center">
+              REGIONAL FINANCIAL HEALTH
+            </p>
+            <WorldFinancialMap />
           </div>
         )}
 
