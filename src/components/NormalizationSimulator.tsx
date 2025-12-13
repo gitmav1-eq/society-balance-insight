@@ -17,6 +17,46 @@ const presetBehaviors = [
   "Credit-based consumption",
 ];
 
+// Keywords that indicate financial/economic behavior topics
+const financialKeywords = [
+  "money", "saving", "savings", "spend", "spending", "debt", "loan", "credit", "emi",
+  "invest", "investment", "income", "salary", "wage", "rent", "mortgage", "insurance",
+  "retirement", "pension", "tax", "budget", "expense", "buy", "purchase", "consume",
+  "consumption", "inflation", "wealth", "financial", "finance", "bank", "payment",
+  "afford", "cost", "price", "cheap", "expensive", "frugal", "splurge", "luxury",
+  "gig", "freelance", "work", "job", "career", "earning", "profit", "loss",
+  "stock", "crypto", "asset", "liability", "interest", "compound", "emergency fund",
+  "side hustle", "passive income", "subscription", "lease", "installment"
+];
+
+const MAX_INPUT_LENGTH = 200;
+
+const validateFinancialTopic = (input: string): { valid: boolean; message?: string } => {
+  const trimmed = input.trim().toLowerCase();
+  
+  if (trimmed.length < 5) {
+    return { valid: false, message: "Please describe a behavior in more detail" };
+  }
+  
+  if (trimmed.length > MAX_INPUT_LENGTH) {
+    return { valid: false, message: `Please keep your input under ${MAX_INPUT_LENGTH} characters` };
+  }
+  
+  // Check if input contains any financial keywords
+  const hasFinancialContext = financialKeywords.some(keyword => 
+    trimmed.includes(keyword.toLowerCase())
+  );
+  
+  if (!hasFinancialContext) {
+    return { 
+      valid: false, 
+      message: "Try describing a financial behavior like spending habits, saving patterns, or economic choices" 
+    };
+  }
+  
+  return { valid: true };
+};
+
 interface SimulationResult {
   individual: string;
   collective: string;
@@ -32,6 +72,7 @@ const NormalizationSimulator = () => {
   const [displayBehavior, setDisplayBehavior] = useState("");
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -76,12 +117,22 @@ const NormalizationSimulator = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleSimulate = useCallback(async (behaviorToSimulate: string) => {
+  const handleSimulate = useCallback(async (behaviorToSimulate: string, skipValidation = false) => {
     if (!behaviorToSimulate.trim()) {
       toast.error("Select or enter a behavior");
       return;
     }
 
+    // Validate custom inputs (skip for preset behaviors)
+    if (!skipValidation) {
+      const validation = validateFinancialTopic(behaviorToSimulate);
+      if (!validation.valid) {
+        setValidationError(validation.message || null);
+        return;
+      }
+    }
+    
+    setValidationError(null);
     const cacheKey = behaviorToSimulate.toLowerCase().trim();
     setDisplayBehavior(behaviorToSimulate);
     setCustomInput("");
@@ -154,7 +205,7 @@ const NormalizationSimulator = () => {
               {presetBehaviors.map((preset, index) => (
                 <button
                   key={index}
-                  onClick={() => handleSimulate(preset)}
+                  onClick={() => handleSimulate(preset, true)}
                   disabled={isLoading}
                   className="px-4 py-2.5 text-sm border border-border/50 bg-background/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all disabled:opacity-50 rounded-sm"
                 >
@@ -164,14 +215,30 @@ const NormalizationSimulator = () => {
             </div>
 
             <div className="border-t border-border/30 pt-6">
-              <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-4">OR DESCRIBE YOUR OWN</p>
+              <p className="font-mono text-[9px] tracking-widest text-muted-foreground mb-2">OR DESCRIBE YOUR OWN</p>
+              <p className="text-[11px] text-muted-foreground/60 mb-4">
+                Describe a financial behavior, spending habit, or economic choice
+              </p>
               <Textarea
-                placeholder="Enter a behavior to explore..."
+                placeholder="e.g., Taking multiple subscriptions, avoiding health insurance, relying on credit cards..."
                 value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
-                className="min-h-[80px] resize-none bg-background/50 border-border/50 mb-4"
+                onChange={(e) => {
+                  setCustomInput(e.target.value.slice(0, MAX_INPUT_LENGTH));
+                  setValidationError(null);
+                }}
+                className={`min-h-[80px] resize-none bg-background/50 border-border/50 mb-2 ${
+                  validationError ? 'border-destructive/50' : ''
+                }`}
                 disabled={isLoading}
               />
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] text-muted-foreground/50">
+                  {customInput.length}/{MAX_INPUT_LENGTH}
+                </span>
+                {validationError && (
+                  <span className="text-[11px] text-destructive">{validationError}</span>
+                )}
+              </div>
               <Button onClick={() => handleSimulate(customInput)} disabled={isLoading || !customInput.trim()} className="w-full md:w-auto px-8">
                 Explore
               </Button>
