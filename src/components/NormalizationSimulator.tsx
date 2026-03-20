@@ -222,10 +222,12 @@ const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: Normaliz
 
   const handleReset = useCallback(() => {
     setResult(null);
+    setSystemResponse(null);
     setDisplayBehavior("");
     setCustomInput("");
+    onRiskLevelChange?.(null);
     playTap();
-  }, [playTap]);
+  }, [playTap, onRiskLevelChange]);
 
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6 relative overflow-hidden">
