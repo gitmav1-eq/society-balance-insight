@@ -208,6 +208,8 @@ const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: Normaliz
         simulationCache.set(cacheKey, normalizedResult);
         setResult(normalizedResult);
         playComplete();
+        // Trigger system response
+        fetchSystemResponse(behaviorToSimulate, normalizedResult);
       } else {
         toast.error("Simulation failed");
       }
