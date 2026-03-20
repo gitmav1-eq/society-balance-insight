@@ -10,6 +10,7 @@ import { useAmbientSound } from "@/hooks/useAmbientSound";
 import { StarryButton } from "@/components/ui/StarryButton";
 import CosmicParticles from "@/components/ui/CosmicParticles";
 import AmbientNebula from "@/components/ui/AmbientNebula";
+import SystemResponse from "@/components/SystemResponse";
 
 gsap.registerPlugin(ScrollTrigger);
 

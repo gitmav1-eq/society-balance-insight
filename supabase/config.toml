@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.archivist-chat]
 verify_jwt = false
+
+[functions.system-response]
+verify_jwt = false
