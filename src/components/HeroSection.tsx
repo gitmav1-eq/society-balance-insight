@@ -65,18 +65,28 @@ const HeroSection = ({ onSimulateClick }: HeroSectionProps) => {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/5 via-background/30 to-background" />
 
       <div ref={contentRef} className="relative z-10 max-w-2xl mx-auto px-6 text-center">
-        <h1 className="hero-animate text-3xl md:text-4xl lg:text-5xl leading-[1.15] mb-6 font-bold">
+        <div className="hero-animate flex items-center justify-center gap-2 mb-8">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+          <span className="font-mono text-[9px] tracking-[0.4em] text-muted-foreground/60 animate-status-pulse">
+            SYSTEM ACTIVE
+          </span>
+        </div>
+
+        <h1 className="hero-animate text-3xl md:text-4xl lg:text-5xl leading-[1.15] mb-6 font-bold text-shadow-glow">
           Zoom out.
           <br />
           <span className="text-primary/90">See the consequences clearly.</span>
         </h1>
         
         <p className="hero-animate text-base md:text-lg text-muted-foreground/70 max-w-md mx-auto mb-12 leading-relaxed">
-          Small everyday choices, when repeated by millions, quietly shape the future.
+          A system that understands society and responds to it.
         </p>
         
         <div className="hero-animate">
-          <Button onClick={onSimulateClick} size="lg" className="px-10 py-6 text-sm font-medium">
+          <Button onClick={onSimulateClick} size="lg" className="px-10 py-6 text-sm font-medium glow-primary">
             Start a Simulation
           </Button>
         </div>

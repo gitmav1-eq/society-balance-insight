@@ -10,6 +10,7 @@ import { useAmbientSound } from "@/hooks/useAmbientSound";
 import { StarryButton } from "@/components/ui/StarryButton";
 import CosmicParticles from "@/components/ui/CosmicParticles";
 import AmbientNebula from "@/components/ui/AmbientNebula";
+import SystemResponse from "@/components/SystemResponse";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,12 +72,19 @@ interface SimulationResult {
 // Simple in-memory cache for simulation results
 const simulationCache = new Map<string, SimulationResult>();
 
-const NormalizationSimulator = () => {
+interface NormalizationSimulatorProps {
+  onRiskLevelChange?: (level: "low" | "medium" | "high" | null) => void;
+  triggerBehavior?: string | null;
+}
+
+const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: NormalizationSimulatorProps) => {
   const [customInput, setCustomInput] = useState("");
   const [displayBehavior, setDisplayBehavior] = useState("");
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [systemResponse, setSystemResponse] = useState<any>(null);
+  const [systemResponseLoading, setSystemResponseLoading] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -121,6 +129,30 @@ const NormalizationSimulator = () => {
 
     return () => ctx.revert();
   }, []);
+
+  // Handle external trigger (demo mode)
+  useEffect(() => {
+    if (triggerBehavior) {
+      handleSimulate(triggerBehavior, true);
+    }
+  }, [triggerBehavior]);
+
+  const fetchSystemResponse = useCallback(async (behavior: string, simResult: SimulationResult) => {
+    setSystemResponseLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("system-response", {
+        body: { behavior, simulationResult: simResult },
+      });
+      if (!error && data?.result) {
+        setSystemResponse(data.result);
+        onRiskLevelChange?.(data.result.risk_level);
+      }
+    } catch {
+      // System response is non-critical, fail silently
+    } finally {
+      setSystemResponseLoading(false);
+    }
+  }, [onRiskLevelChange]);
 
   const handleSimulate = useCallback(async (behaviorToSimulate: string, skipValidation = false) => {
     if (!behaviorToSimulate.trim()) {
@@ -176,6 +208,8 @@ const NormalizationSimulator = () => {
         simulationCache.set(cacheKey, normalizedResult);
         setResult(normalizedResult);
         playComplete();
+        // Trigger system response
+        fetchSystemResponse(behaviorToSimulate, normalizedResult);
       } else {
         toast.error("Simulation failed");
       }
@@ -184,14 +218,16 @@ const NormalizationSimulator = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [playStart, playComplete]);
+  }, [playStart, playComplete, fetchSystemResponse]);
 
   const handleReset = useCallback(() => {
     setResult(null);
+    setSystemResponse(null);
     setDisplayBehavior("");
     setCustomInput("");
+    onRiskLevelChange?.(null);
     playTap();
-  }, [playTap]);
+  }, [playTap, onRiskLevelChange]);
 
   return (
     <section ref={sectionRef} id="simulator" className="py-24 px-6 relative overflow-hidden">
@@ -324,7 +360,9 @@ const NormalizationSimulator = () => {
               </div>
             </div>
 
-            {/* Related behaviors to keep users engaged */}
+            {/* System Response Layer */}
+            <SystemResponse data={systemResponse} isLoading={systemResponseLoading} />
+
             <div className="pt-6 border-t border-border/20">
               <p className="font-mono text-[8px] tracking-widest text-muted-foreground/50 mb-3">
                 EXPLORE RELATED PATTERNS

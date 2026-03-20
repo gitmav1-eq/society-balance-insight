@@ -39,9 +39,10 @@ const DynamicHeader = ({ mode = "landing", breadcrumb }: DynamicHeaderProps) => 
   }, []);
 
   const navItems = [
+    { label: "Explore", href: "#hero" },
     { label: "Simulate", href: "#simulator" },
-    { label: "Why This Matters", href: "#why" },
-    { label: "The Public Balance Sheet", href: "#balance" },
+    { label: "Interventions", href: "#interventions" },
+    { label: "Insights", href: "#balance" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -117,12 +118,12 @@ const DynamicHeader = ({ mode = "landing", breadcrumb }: DynamicHeaderProps) => 
             SOCIETY.EXE
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-10">
             {navItems.map((item) => (
               <button
                 key={item.label}
                 onClick={() => scrollToSection(item.href)}
-                className="text-xs text-muted-foreground/70 hover:text-foreground transition-colors duration-300"
+                className="relative text-[11px] tracking-wide text-muted-foreground/70 hover:text-foreground transition-colors duration-300 py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-primary/50 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
               >
                 {item.label}
               </button>

@@ -164,6 +164,18 @@ export default {
 					opacity: '1',
 					transform: 'scale(1)'
 				}
+			},
+			'system-reveal': {
+				'0%': {
+					opacity: '0',
+					transform: 'translateY(12px)',
+					filter: 'blur(4px)'
+				},
+				'100%': {
+					opacity: '1',
+					transform: 'translateY(0)',
+					filter: 'blur(0)'
+				}
 			}
 		},
 		animation: {
@@ -176,7 +188,8 @@ export default {
 			'confetti-fall': 'confetti-fall 3s ease-out forwards',
 			'confetti-spin': 'confetti-spin 1s linear infinite',
 			'fade-in': 'fade-in 0.3s ease-out',
-			'scale-in': 'scale-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+			'scale-in': 'scale-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+			'system-reveal': 'system-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'
 		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',
