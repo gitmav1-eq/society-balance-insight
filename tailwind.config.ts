@@ -164,6 +164,18 @@ export default {
 					opacity: '1',
 					transform: 'scale(1)'
 				}
+			},
+			'system-reveal': {
+				'0%': {
+					opacity: '0',
+					transform: 'translateY(12px)',
+					filter: 'blur(4px)'
+				},
+				'100%': {
+					opacity: '1',
+					transform: 'translateY(0)',
+					filter: 'blur(0)'
+				}
 			}
 		},
 		animation: {
