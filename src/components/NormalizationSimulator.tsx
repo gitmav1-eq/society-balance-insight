@@ -360,7 +360,9 @@ const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: Normaliz
               </div>
             </div>
 
-            {/* Related behaviors to keep users engaged */}
+            {/* System Response Layer */}
+            <SystemResponse data={systemResponse} isLoading={systemResponseLoading} />
+
             <div className="pt-6 border-t border-border/20">
               <p className="font-mono text-[8px] tracking-widest text-muted-foreground/50 mb-3">
                 EXPLORE RELATED PATTERNS
