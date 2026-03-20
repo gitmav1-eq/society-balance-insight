@@ -39,9 +39,10 @@ const DynamicHeader = ({ mode = "landing", breadcrumb }: DynamicHeaderProps) => 
   }, []);
 
   const navItems = [
+    { label: "Explore", href: "#hero" },
     { label: "Simulate", href: "#simulator" },
-    { label: "Why This Matters", href: "#why" },
-    { label: "The Public Balance Sheet", href: "#balance" },
+    { label: "Interventions", href: "#interventions" },
+    { label: "Insights", href: "#balance" },
   ];
 
   const scrollToSection = (href: string) => {
