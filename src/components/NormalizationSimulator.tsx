@@ -72,12 +72,19 @@ interface SimulationResult {
 // Simple in-memory cache for simulation results
 const simulationCache = new Map<string, SimulationResult>();
 
-const NormalizationSimulator = () => {
+interface NormalizationSimulatorProps {
+  onRiskLevelChange?: (level: "low" | "medium" | "high" | null) => void;
+  triggerBehavior?: string | null;
+}
+
+const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: NormalizationSimulatorProps) => {
   const [customInput, setCustomInput] = useState("");
   const [displayBehavior, setDisplayBehavior] = useState("");
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [systemResponse, setSystemResponse] = useState<any>(null);
+  const [systemResponseLoading, setSystemResponseLoading] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
