@@ -130,6 +130,30 @@ const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: Normaliz
     return () => ctx.revert();
   }, []);
 
+  // Handle external trigger (demo mode)
+  useEffect(() => {
+    if (triggerBehavior) {
+      handleSimulate(triggerBehavior, true);
+    }
+  }, [triggerBehavior]);
+
+  const fetchSystemResponse = useCallback(async (behavior: string, simResult: SimulationResult) => {
+    setSystemResponseLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("system-response", {
+        body: { behavior, simulationResult: simResult },
+      });
+      if (!error && data?.result) {
+        setSystemResponse(data.result);
+        onRiskLevelChange?.(data.result.risk_level);
+      }
+    } catch {
+      // System response is non-critical, fail silently
+    } finally {
+      setSystemResponseLoading(false);
+    }
+  }, [onRiskLevelChange]);
+
   const handleSimulate = useCallback(async (behaviorToSimulate: string, skipValidation = false) => {
     if (!behaviorToSimulate.trim()) {
       toast.error("Select or enter a behavior");
