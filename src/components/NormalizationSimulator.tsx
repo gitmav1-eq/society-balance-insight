@@ -218,7 +218,7 @@ const NormalizationSimulator = ({ onRiskLevelChange, triggerBehavior }: Normaliz
     } finally {
       setIsLoading(false);
     }
-  }, [playStart, playComplete]);
+  }, [playStart, playComplete, fetchSystemResponse]);
 
   const handleReset = useCallback(() => {
     setResult(null);
